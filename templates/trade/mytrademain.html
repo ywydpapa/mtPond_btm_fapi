@@ -1,0 +1,837 @@
+<!DOCTYPE html>
+<html lang="euc-kr">
+<head>
+    {% include '/comm/adheader.html' %}
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <ul class="nav  nav-pills">
+                    {% if license >= 3 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if slot == 1 %}active{% endif %}"
+                               href="/mytradestat/{{ user_No }}/{{ setkey }}/1">SLOT 01</a>
+                        </li>
+                    {% endif %}
+                    {% if license >= 6 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if slot == 2 %}active{% endif %}"
+                               href="/mytradestat/{{ user_No }}/{{ setkey }}/2">SLOT 02</a>
+                        </li>
+                    {% endif %}
+                    {% if license >= 9 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if slot == 3 %}active{% endif %}"
+                               href="/mytradestat/{{ user_No }}/{{ setkey }}/3">SLOT 03</a>
+                        </li>
+                    {% endif %}
+                    {% if license >= 12 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if slot == 4 %}active{% endif %}"
+                               href="/mytradestat/{{ user_No }}/{{ setkey }}/4">SLOT 04</a>
+                        </li>
+                    {% endif %}
+                    {% if license >= 15 %}
+                        <li class="nav-item">
+                            <a class="nav-link {% if slot == 5 %}active{% endif %}"
+                               href="/mytradestat/{{ user_No }}/{{ setkey }}/5">SLOT 05</a>
+                        </li>
+                    {% endif %}
+                </ul>
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">설정내용 1 <a
+                                        href="/editSetup?setno={{ setups[0][0] }}&coinA={{ setups[1][6] }}&coinB={{ setups[2][6] }}&tabindex={{ slot }}">
+                                    [수정] </a></h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center"><a
+                                                    href="https://upbit.com/exchange?code=CRIX.UPBIT.{{ setups[0][6] }}" target="_blank">{{ setups[0][6] }}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">시작금액/한도금액</td>
+                                            <td id="initamount" style="text-align: right">{{ "{:,.0f}".format(setups[0][2]|float)}}/<span {% if setups[0][13] == 'Y' %}style="color: red;"{% endif %}>{{ "{:,.0f}".format(setups[0][14]|float) }} </span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td> <div style="display: flex; width: 100%; text-align: right;">
+                                                <span id="curtrade1-price" style="flex: 1;"></span>
+                                                <span id="curtrade1-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee; color:green"></span>
+                                                <span id="curtrade1-ask" style="flex: 1; color: blue"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="display: none">
+                                            <td style="text-align: center">추가매수설정</td>
+                                            <td style="text-align: right">{{ setups[0][12] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">거래설정</td>
+                                            <td style="text-align: right">
+                                                <div class="d-flex" style="gap: 1.5rem;">
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="autochg1" name="autochg1"/>
+                                                        <label class="custom-control-label" for="autochg1">자동전환</label>
+                                                    </div>
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="hotwtr1" name="hotwtr1"/>
+                                                        <label class="custom-control-label" for="hotwtr1">Hot Trace</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">손절설정</td>
+                                            <td class="align-items-center">
+                                            <div class="d-flex align-items-center gap-12 justify-content-center">
+                                                <div class="custom-control custom-switch">
+                                                    <input class="custom-control-input" type="checkbox" id="chklc1" name="chklc1"{% if setups[0][4] == 1.0 %}checked{% endif %}/>
+                                                    <label class="custom-control-label" for="chklc1">  </label>
+                                                </div>
+                                                    <input class="form-control-sm" style="text-align: right; border: #717384" type="number" name="lcrate1" id="lcrate1" value="{{ setups[0][5] }}" max = "-1.5" min = "-10" step = "0.1">
+                                                    <label class="form-control-sm" for="lcrate1" style="margin-bottom:0"> % </label>
+                                                    <input type="checkbox" name="atstop1" id="atstop1" {% if setups[0][12] == 'Y'%}checked{% endif %}><label for="atstop1" style="margin-bottom:0"> 손절 후 자동OFF</label>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">동작상태</td>
+                                            <td style="text-align:center">
+                                                <div class="custom-control custom-switch">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk1" name="chk1"
+                                                               {% if setups[0][7]=='Y' %}checked{% endif %}/>
+                                                        <label class="custom-control-label" for="chk1">on/off</label>
+                                                    </h4>
+                                                </div>
+                                                <div class="custom-control custom-switch" style="display: none">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk2" name="chk2"
+                                                               {% if setups[0][10]=='Y' %}checked{% endif %}
+                                                               {% if setups[0][10]=='N' %} disabled{% endif %}/>
+                                                        <label class="custom-control-label" for="chk2">hold</label></h4>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">설정내용 2 <a
+                                        href="/editSetup?setno={{ setups[1][0] }}&coinA={{ setups[0][6] }}&coinB={{ setups[2][6] }}&tabindex={{ slot }}">
+                                    [수정] </a></h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center"><a
+                                                    href="https://upbit.com/exchange?code=CRIX.UPBIT.{{ setups[1][6] }}" target="_blank" >{{ setups[1][6] }}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">시작금액</td>
+                                            <td id="initamount2" style="text-align: right">{{ "{:,.0f}".format(setups[1][2]|float)}}/<span {% if setups[1][13] == 'Y' %}style="color: red;"{% endif %}>{{ "{:,.0f}".format(setups[1][14]|float) }} </span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td> <div style="display: flex; width: 100%; text-align: right;">
+                                                <span id="curtrade2-price" style="flex: 1;"></span>
+                                                <span id="curtrade2-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee;color:green"></span>
+                                                <span id="curtrade2-ask" style="flex: 1;color:blue"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr style="display: none">
+                                            <td style="text-align: center">추가매수설정</td>
+                                            <td style="text-align: right">{{ setups[1][12] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">거래설정</td>
+                                            <td style="text-align: right">
+                                                <div class="d-flex" style="gap: 1.5rem;">
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="autochg2" name="autochg2"/>
+                                                        <label class="custom-control-label" for="autochg1">자동전환</label>
+                                                    </div>
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="hotwtr2" name="hotwtr2"/>
+                                                        <label class="custom-control-label" for="hotwtr1">Hot Trace</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">손절설정</td>
+                                            <td class="align-items-center">
+                                            <div class="d-flex align-items-center gap-12 justify-content-center">
+                                                <div class="custom-control custom-switch">
+                                                    <input class="custom-control-input" type="checkbox" id="chklc2" name="chklc2"{% if setups[1][4] == 1.0 %}checked{% endif %}/>
+                                                    <label class="custom-control-label" for="chklc2">  </label>
+                                                </div>
+                                                    <input class="form-control-sm" style="text-align: right; border: #717384" type="number" name="lcrate2" id="lcrate2" value="{{ setups[1][5] }}" max = "-1.5" min = "-10" step = "0.1">
+                                                    <label class="form-control-sm" for="lcrate2" style="margin-bottom:0"> %    </label>
+                                                    <input type="checkbox" name="atstop2" id="atstop2" {% if setups[1][12] == 'Y'%}checked{% endif %}><label for="atstop2" style="margin-bottom:0"> 손절 후 자동OFF</label>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">동작상태</td>
+                                            <td style="text-align:center">
+                                                <div class="custom-control custom-switch">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk3" name="chk3"
+                                                               {% if setups[1][7]=='Y' %}checked{% endif %}/>
+                                                        <label class="custom-control-label" for="chk3">on/off</label>
+                                                    </h4>
+                                                </div>
+                                                <div class="custom-control custom-switch" style="display: none">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk4" name="chk4"
+                                                               {% if setups[1][10]=='Y' %}checked{% endif %}
+                                                               {% if setups[1][10]=='N' %} disabled{% endif %}/>
+                                                        <label class="custom-control-label" for="chk4">hold</label></h4>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">설정내용 3 <a
+                                        href="/editSetup?setno={{ setups[2][0] }}&coinA={{ setups[0][6] }}&coinB={{ setups[1][6] }}&tabindex={{ slot }}">
+                                    [수정] </a></h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center"><a
+                                                    href="https://upbit.com/exchange?code=CRIX.UPBIT.{{ setups[2][6] }}" target="_blank">{{ setups[2][6] }}</a>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">시작금액</td>
+                                            <td id="initamount3" style="text-align: right">{{ "{:,.0f}".format(setups[2][2]|float)}}/<span {% if setups[2][13] == 'Y' %}style="color: red;"{% endif %}>{{ "{:,.0f}".format(setups[2][14]|float) }} </span></td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td> <div style="display: flex; width: 100%; text-align: right;">
+                                                <span id="curtrade3-price" style="flex: 1;"></span>
+                                                <span id="curtrade3-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee;color:green"></span>
+                                                <span id="curtrade3-ask" style="flex: 1;color:blue"></span>
+                                                </div>
+                                            </td>
+
+                                        </tr>
+                                        <tr style="display: none">
+                                            <td style="text-align: center">추가매수설정</td>
+                                            <td style="text-align: right">{{ setups[2][12] }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">거래설정</td>
+                                            <td style="text-align: right">
+                                                <div class="d-flex" style="gap: 1.5rem;">
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="autochg3" name="autochg3"/>
+                                                        <label class="custom-control-label" for="autochg1">자동전환</label>
+                                                    </div>
+                                                    <div class="custom-control custom-switch flex-fill text-center">
+                                                        <input class="custom-control-input" type="checkbox" id="hotwtr3" name="hotwtr3"/>
+                                                        <label class="custom-control-label" for="hotwtr1">Hot Trace</label>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">손절설정</td>
+                                            <td class="align-items-center">
+                                            <div class="d-flex align-items-center gap-12 justify-content-center">
+                                                <div class="custom-control custom-switch">
+                                                    <input class="custom-control-input" type="checkbox" id="chklc3" name="chklc3"{% if setups[2][4] == 1.0 %}checked{% endif %}/>
+                                                    <label class="custom-control-label" for="chklc3">  </label>
+                                                </div>
+                                                    <input class="form-control-sm" style="text-align: right; border: #717384" type="number" name="lcrate3" id="lcrate3" value="{{ setups[2][5] }}" max = "-1.5" min = "-10" step = "0.1">
+                                                    <label class="form-control-sm" for="lcrate3" style="margin-bottom:0"> % </label>
+                                                    <input type="checkbox" name="atstop3" id="atstop3" {% if setups[2][12] == 'Y'%}checked{% endif %}><label for="atstop3" style="margin-bottom:0"> 손절 후 자동OFF</label>
+                                            </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">동작상태</td>
+                                            <td style="text-align:center">
+                                                <div class="custom-control custom-switch">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk5" name="chk5"
+                                                               {% if setups[2][7]=='Y' %}checked{% endif %}/>
+                                                        <label class="custom-control-label" for="chk5">on/off</label>
+                                                    </h4>
+                                                </div>
+                                                <div class="custom-control custom-switch" style="display: none">
+                                                    <h4><input style="zoom: 150%" type="checkbox"
+                                                               class="custom-control-input" id="chk6" name="chk6"
+                                                               {% if setups[2][10]=='Y' %}checked{% endif %}
+                                                               {% if setups[2][10]=='N' %} disabled{% endif %}/>
+                                                        <label class="custom-control-label" for="chk6">hold</label></h4>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="myChart1" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="myChart2" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="myChart3" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">거래현황</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="tradestat" name="tradestat" width="100%"
+                                   cellspacing="0">
+                                <thead>
+                                <tr style="text-align: center;vertical-align: middle">
+                                    <th>거래일시</th>
+                                    <th>코인명</th>
+                                    <th>거래종류</th>
+                                    <th>시가비율</th>
+                                    <th>주문가격</th>
+                                    <th>주문수량</th>
+                                    <th>주문금액</th>
+                                    <th>미체결량</th>
+                                    <th>예상수수료</th>
+                                    <th>코인 관리</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for items in orderlist %}
+                                    <tr>
+                                        <td style="text-align: center">{{ items['created_at'][:10] }} {{ items['created_at'][11:19] }}</td>
+                                        <td style="text-align: center">{{ items['market'] }}</td>
+                                        <td style="text-align: center">{% if items['side'] == 'ask' %}<span
+                                                style="color: blue; ">매도</span>{% else %}
+                                            <span style="color: red; ">매수</span>{% endif %} </td>
+                                        <td style="text-align: center" class="cudiff" ></td>
+                                        <td style="text-align: right" class="oprice">{% if items['price']|float < 1 %}{{ '{:,.6f}'.format(items['price']|float) }}{% elif items['price']|float < 100 %}{{ '{:,.2f}'.format(items['price']|float) }}{% else %}
+                                            {{ '{:,.0f}'.format(items['price']|float) }}{% endif %}</td>
+                                        <td style="text-align: right" class="ovol">{{ items['volume'] }}</td>
+                                        <td style="text-align: right" class="ovalue">{{ "{:,.0f}".format(items['volume']|float * items['price']|float) }}</td>
+                                        <td style="text-align: right">{{ items['remaining_volume'] }}</td>
+                                        <td style="text-align: right">{{ "{:,.0f}".format(items['volume']|float * items['price']|float * 0.0005) }}</td>
+                                        <td>
+                                            <button class="btn form-control btn-primary"
+                                                    onclick="cancelorder({{ user_No }}, {{ setkey }},'{{ items["uuid"] }}')">
+                                                거래 취소
+                                            </button>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Bootstrap core JavaScript-->
+
+{% include '/comm/adscript.html' %}
+{% include './comm/adscriptchart.html' %}
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</body>
+<script>
+    $(document).ready(function () {
+        setInterval(fetchOrderListAndUpdate, 10000);
+    });
+
+    const coins = ['{{setups[0][6]}}','{{setups[1][6]}}','{{setups[2][6]}}'];
+    const recentTrades = {
+    '{{ setups[0][6] }}': [],
+    '{{ setups[1][6] }}': [],
+    '{{ setups[2][6] }}': []
+};
+    const priceHistory = {
+    1: [],
+    2: [],
+    3: []
+};
+
+    const protocol = location.protocol === "https:" ? "wss" : "ws";
+    const ws = new WebSocket(`${protocol}://${location.host}/ws/trade?coins=${coins.join(",")}`);
+    const currentPrices = {};
+    function createTrendChart(canvasId, color) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array(20).fill(''),
+            datasets: [{
+                label: '현재가',
+                data: [],
+                borderColor: color,
+                backgroundColor: color.replace('1)', '0.1)'), // RGBA일 때만!
+                pointRadius: 0,
+                borderWidth: 2,
+                tension: 0.2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { display: true }
+            }
+        }
+    });
+}
+
+    const chartColors = [
+    'rgba(0,0,255,1)',   // 파랑
+    'rgba(255,0,0,1)',   // 빨강
+    'rgba(0,200,0,1)'    // 초록
+];
+
+const charts = [
+    createTrendChart('myChart1', chartColors[0]),
+    createTrendChart('myChart2', chartColors[1]),
+    createTrendChart('myChart3', chartColors[2])
+];
+
+const priceHistories = [[], [], []];
+
+
+function updateTrendChart(index, newPrice) {
+    priceHistories[index].push(newPrice);
+    if (priceHistories[index].length > 20) priceHistories[index].shift();
+    charts[index].data.datasets[0].data = priceHistories[index];
+
+    // y축 범위 자동 조정
+    const prices = priceHistories[index];
+    if (prices.length > 1) {
+        const min = Math.min(...prices);
+        const max = Math.max(...prices);
+        const margin = (max - min) * 0.2 || (max * 0.01); // 최소 마진 1%
+        charts[index].options.scales.y.min = Math.floor(min - margin);
+        charts[index].options.scales.y.max = Math.ceil(max + margin);
+    }
+
+    charts[index].update();
+}
+
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const market = data.market;
+    currentPrices[market] = data.trade_price;
+    if (recentTrades[market]) {
+        recentTrades[market].push(data);
+        if (recentTrades[market].length > 20) {
+            recentTrades[market].shift();
+        }
+
+        let bidSumKRW = 0;
+        let askSumKRW = 0;
+        recentTrades[market].forEach(trade => {
+            if (trade.ask_bid === "BID") {
+                bidSumKRW += trade.trade_volume * trade.trade_price;
+            } else if (trade.ask_bid === "ASK") {
+                askSumKRW += trade.trade_volume * trade.trade_price;
+            }
+        });
+
+        const displayStr = `${numberWithCommas(data.trade_price)} / ${numberWithCommas(bidSumKRW.toFixed(0))} : ${numberWithCommas(askSumKRW.toFixed(0))}`;
+
+        if (market === '{{ setups[0][6] }}') {
+            document.getElementById("curtrade1-price").innerText = numberWithCommas(data.trade_price);
+            document.getElementById("curtrade1-bid").innerText = numberWithCommas(bidSumKRW.toFixed(0));
+            document.getElementById("curtrade1-ask").innerText = numberWithCommas(askSumKRW.toFixed(0));
+             updateTrendChart(0, data.trade_price);
+        }
+        if (market === '{{ setups[1][6] }}') {
+            document.getElementById("curtrade2-price").innerText = numberWithCommas(data.trade_price);
+            document.getElementById("curtrade2-bid").innerText = numberWithCommas(bidSumKRW.toFixed(0));
+            document.getElementById("curtrade2-ask").innerText = numberWithCommas(askSumKRW.toFixed(0));
+             updateTrendChart(1, data.trade_price);
+        }
+        if (market === '{{ setups[2][6] }}') {
+            document.getElementById("curtrade3-price").innerText = numberWithCommas(data.trade_price);
+            document.getElementById("curtrade3-bid").innerText = numberWithCommas(bidSumKRW.toFixed(0));
+            document.getElementById("curtrade3-ask").innerText = numberWithCommas(askSumKRW.toFixed(0));
+             updateTrendChart(2, data.trade_price);
+        }
+    }
+    updateCudiff();
+};
+
+    $("#chk1").change(function () {
+        var setno = {{ setups[0][0] }}
+        if ($('input[name="chk1"]').is(":checked") === true) {
+            setyn(setno, "Y");
+        } else {
+            setyn(setno, "N");
+        }
+    });
+
+    $("#chk3").change(function () {
+        var setno = {{ setups[1][0] }}
+        if ($('input[name="chk3"]').is(":checked") === true) {
+            setyn(setno, "Y");
+        } else {
+            setyn(setno, "N");
+        }
+    });
+
+    $("#chk5").change(function () {
+        var setno = {{ setups[2][0] }}
+        if ($('input[name="chk5"]').is(":checked") === true) {
+            setyn(setno, "Y");
+        } else {
+            setyn(setno, "N");
+        }
+    });
+
+    $("#chk2").change(function () {
+        var uno = {{ user_No }}
+        if ($('input[name="chk2"]').is(":checked") === true) {
+            sethr(uno, "Y");
+        } else {
+            sethr(uno, "N");
+        }
+    });
+
+    $("#chklc1").change(function () {
+        var sno = {{ setups[0][0] }}
+        var srate = $("#lcrate1").val();
+        if ($('input[name="chklc1"]').is(":checked") === true) {
+            setlc(sno,srate,1.0);
+        } else {
+            setlc(sno,srate,0);
+        }
+    });
+
+    $("#chklc2").change(function () {
+        var sno = {{ setups[1][0] }}
+        var srate = $("#lcrate2").val();
+        if ($('input[name="chklc2"]').is(":checked") === true) {
+            setlc(sno,srate,1.0);
+        } else {
+            setlc(sno,srate,0);
+        }
+    });
+
+    $("#chklc3").change(function () {
+        var sno = {{ setups[2][0] }}
+        var srate = $("#lcrate3").val();
+        if ($('input[name="chklc3"]').is(":checked") === true) {
+            setlc(sno,srate,1.0);
+        } else {
+            setlc(sno,srate,0);
+        }
+    });
+
+    $("#atstop1").change(function () {
+        var sno = {{ setups[0][0] }}
+        if ($('input[name="atstop1"]').is(":checked") === true) {
+            setautostop(sno,'Y');
+        } else {
+            setautostop(sno,'N');
+        }
+    });
+
+    $("#atstop2").change(function () {
+        var sno = {{ setups[1][0] }}
+        if ($('input[name="atstop2"]').is(":checked") === true) {
+            setautostop(sno,'Y');
+        } else {
+            setautostop(sno,'N');
+        }
+    });
+
+    $("#atstop3").change(function () {
+        var sno = {{ setups[2][0] }}
+        if ($('input[name="atstop3"]').is(":checked") === true) {
+            setautostop(sno,'Y');
+        } else {
+            setautostop(sno,'N');
+        }
+    });
+
+    function setyn(setno, yn) {
+        const formData = new FormData();
+            formData.append('setno', setno);
+            formData.append('yn', yn);
+        $.ajax({
+            type: "POST",
+            url: '/setyns',
+            data: formData,
+            async: false,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                if (res == "OVER") {
+                    alert("10만원 이상의 자산이 지갑에 있습니다. \n 지갑 내 기존 코인 정리 후 트레이딩이 가능합니다.");
+                }
+                const originalUrl = sessionStorage.getItem('originalUrl');
+                    if (originalUrl) {
+                        location.replace(originalUrl);
+                        } else {
+                        location.reload();
+                    }
+            }
+        });
+    }
+
+    function setautostop(sno, yesno){
+        const formData = new FormData();
+            formData.append('sno', sno);
+            formData.append('yesno', yesno);
+        $.ajax({
+            type: "POST",
+            url: '/setautostop',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                console.log(res);
+                const originalUrl = sessionStorage.getItem('originalUrl');
+                if (originalUrl) {
+                    location.replace(originalUrl);
+                } else {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+        function setlc(sno,rate,onoff) {
+        const formData = new FormData();
+            formData.append('sno', sno);
+            formData.append('rate', rate);
+            formData.append('onoff', onoff);
+        data = [sno, rate, onoff]
+        $.ajax({
+            type: "POST",
+            url: '/setlosscut',
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                console.log(res);
+                const originalUrl = sessionStorage.getItem('originalUrl');
+                if (originalUrl) {
+                    location.replace(originalUrl);
+                } else {
+                    location.reload();
+                }
+            }
+        });
+    }
+
+    function cancelorder(uno, setkey , uuid) {
+        if (confirm("본 거래를 취소 하시겠습니까?")) {
+            const formData = new FormData();
+            formData.append('uno', uno);
+            formData.append('setkey', setkey);
+            formData.append('uuid', uuid);
+
+            $.ajax({
+                type: "POST",
+                url: '/cancelOrder',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: (res) => {
+                    console.log(res);
+                    const originalUrl = sessionStorage.getItem('originalUrl');
+                    if (originalUrl) {
+                        location.replace(originalUrl);
+                        } else {
+                        location.reload();
+                    }
+                }
+            });
+        }else{
+            alert ('거래 취소를 실패했습니다. !!')
+        }
+    }
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function numberNoneCommas(x) {
+        return x.toString().replace(/[\D\s\._\-]+/g, "");
+    }
+
+    function updateCudiff() {
+    $("#tradestat tbody tr").each(function() {
+        const $row = $(this);
+        // 코인명: 앞뒤 공백 제거, 대문자 통일
+        const market = $row.find("td:nth-child(2)").text().trim().toUpperCase();
+        const priceText = $row.find(".oprice").text().replace(/,/g, "");
+        const orderPrice = parseFloat(priceText);
+        const curPrice = currentPrices[market];
+        if (curPrice !== undefined && !isNaN(orderPrice) && orderPrice > 0) {
+            const diff = ((curPrice - orderPrice) / orderPrice) * 100;
+            $row.find(".cudiff").text(diff.toFixed(2) + " %");
+        } else {
+            $row.find(".cudiff").text("-");
+        }
+    });
+}
+
+function fetchOrderListAndUpdate() {
+    $.ajax({
+        type: "GET",
+        url: `/rest_getorder/{{ user_No }}/{{ setkey }}/{{ slot }}`,
+        dataType: "json",
+        success: function(res) {
+            if (res.success) {
+                updateOrderTable(res.data);
+            }
+        }
+    });
+}
+
+function updateOrderTable(orderlist) {
+    let tbody = "";
+    orderlist.forEach(items => {
+        let created_at = items['created_at'].slice(0,10) + " " + items['created_at'].slice(11,19);
+        let market = items['market'];
+        let side = items['side'] === 'ask' ? '<span style="color: blue;">매도</span>' : '<span style="color: red;">매수</span>';
+        let price = parseFloat(items['price']);
+        let priceStr = price < 1 ? price.toFixed(6) : (price < 100 ? price.toFixed(2) : price.toFixed(0));
+        priceStr = numberWithCommas(priceStr);
+        let volume = items['volume'];
+        let ovalue = numberWithCommas((parseFloat(items['volume']) * parseFloat(items['price'])).toFixed(0));
+        let remaining = items['remaining_volume'];
+        let fee = numberWithCommas((parseFloat(items['volume']) * parseFloat(items['price']) * 0.0005).toFixed(0));
+        let row = `
+        <tr>
+            <td style="text-align: center">${created_at}</td>
+            <td style="text-align: center">${market}</td>
+            <td style="text-align: center">${side}</td>
+            <td style="text-align: center" class="cudiff"></td>
+            <td style="text-align: right" class="oprice">${priceStr}</td>
+            <td style="text-align: right" class="ovol">${volume}</td>
+            <td style="text-align: right" class="ovalue">${ovalue}</td>
+            <td style="text-align: right">${remaining}</td>
+            <td style="text-align: right">${fee}</td>
+            <td>
+                <button class="btn form-control btn-primary"
+                    onclick="cancelorder({{ user_No }}, {{ setkey }},'${items["uuid"]}')">
+                    거래 취소
+                </button>
+            </td>
+        </tr>
+        `;
+        tbody += row;
+    });
+    $("#tradestat tbody").html(tbody);
+    updateCudiff(); // 가격 차이(%) 업데이트
+}
+
+
+</script>
+</html>
+

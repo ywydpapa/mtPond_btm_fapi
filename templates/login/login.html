@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Login</title>
+    <link rel="stylesheet" href="/static/css/loginstyle.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.1/css/all.css">
+</head>
+<body>
+<div id="loginContents">
+    <div id="loginContent">
+        <div id="loginIntroduce">
+            <div id="loginSpans">
+                <span id="loginIntroSpan_1"></span>
+                <span id="loginIntroSpan_2">Mountain Pond</span>
+            </div>
+
+            <div class="login">
+                <h1>Login</h1>
+                <form action="/loginchk" method="post">
+                    <label for="uid">
+                        <i class="fas fa-user"></i>
+                    </label>
+                    <input type="text" name="uid" placeholder="Username" id="uid" required>
+                    <label for="upw">
+                        <i class="fas fa-lock"></i>
+                    </label>
+                    <input type="password" name="upw" placeholder="Password" id="upw" required>
+                    <input type="submit" value="Login">
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

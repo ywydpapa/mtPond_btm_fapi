@@ -1,0 +1,44 @@
+<script src="/static/vendor/jquery/jquery.min.js"></script>
+<script src="/static/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- Core plugin JavaScript-->
+<script src="/static/vendor/jquery-easing/jquery.easing.min.js"></script>
+<!-- Custom scripts for all pages-->
+<script src="/static/js/sb-admin-2.js"></script>
+<script>
+    // 로딩 화면 보이기
+    function showLoading() {
+        document.getElementById('loading').style.visibility = 'visible';
+        setTimeout(() => {
+        document.getElementById('loading').style.visibility = 'hidden';
+    }, 1500); // 1500ms = 1.5초
+    }
+
+    // 로딩 화면 숨기기
+    function hideLoading() {
+        document.getElementById('loading').style.visibility = 'hidden';
+    }
+
+    // 페이지가 로드될 때 로딩 화면 숨기기
+    window.onload = function () {
+        hideLoading();
+    }
+
+    window.onbeforeunload = function (event) {
+        const entries = performance.getEntriesByType("navigation");
+        const navigationType = entries.length > 0 ? entries[0].type : null;
+        if (navigationType !== "back_forward") {
+            showLoading();
+        } else {
+            hideLoading();
+        }
+
+    };
+
+    window.onload = function () {
+    // 현재 주소를 저장
+    sessionStorage.setItem('originalUrl', location.pathname);
+    // 주소 변경
+    const newUrl = '/Mt.Pond AI Trader 2025';
+    history.replaceState(null, '', newUrl);
+};
+</script>

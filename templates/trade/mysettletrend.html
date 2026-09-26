@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include '/comm/adheader.html' %}
+ <style>
+    #dataTable tr td {
+  height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+  .change-up {
+    color: #22c55e; /* 초록색 */
+    font-size: 1.0em;
+  }
+  .change-down {
+    color: #ef4444; /* 빨간색 */
+    font-size: 1.0em;
+  }
+  .change-even {
+    color: #64748b; /* 중립 회색 */
+    font-size: 1.0em;
+  }
+</style>
+
+</head>
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <!-- Page Heading -->
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">지갑자산 체결 트렌드</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr style="text-align: center">
+                                    <th>자산명</th>
+                                    <th>잔고</th>
+                                    <th>거래중</th>
+                                    <th>실시간체결량(매수)</th>
+                                    <th>실시간체결량(매도)</th>
+                                    <th>매수금액</th>
+                                    <th>매도금액</th>
+                                    <th>매수누적금액(30)</th>
+                                    <th>매도누적금액(30)</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for coin in mycoins %}
+                                <tr>
+                                    {% if coin["currency"] == "KRW" %}
+                                    <td style="text-align: center">{{ coin["currency"] }}</td>
+                                    {% else %}
+                                    <td style="text-align: center"><a href="https://upbit.com/exchange?code=CRIX.UPBIT.KRW-{{ coin['currency'] }}" target="_blank">{{ coin["currency"] }}</a></td>
+                                    {% endif %}
+                                    {% if coin["currency"] == "KRW" %}
+                                    <td style="text-align: right">{{ "{:,.0f}".format(coin["balance"]|float) }} </td>
+                                    {% else %}
+                                    <td style="text-align: right">{{ coin["balance"] }} </td>
+                                    {% endif %}
+                                    {% if coin["currency"] == "KRW" %}
+                                    <td style="text-align: right">{{ "{:,.0f}".format(coin["locked"]|float) }} </td>
+                                    {% else %}
+                                    <td style="text-align: right">{{ coin["locked"] }} </td>
+                                    {% endif %}
+                                    <td class="ordsumbid" style="text-align: right"> </td>
+                                    <td class="ordsumask" style="text-align: right"> </td>
+                                    <td class="bidamt" style="text-align: right"> </td>
+                                    <td class="askamt" style="text-align: right"> </td>
+                                    <td class="bidamt30" style="text-align: right"> </td>
+                                    <td class="askamt30" style="text-align: right"> </td>
+                                </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Bootstrap core JavaScript-->
+
+{% include '/comm/adscript.html' %}
+
+<script>
+$(document).ready(function () {
+});
+
+const coins = [];
+{% for coin in mycoins %}
+    {% if coin["currency"] != "KRW" %}
+        coins.push("KRW-{{ coin['currency'] }}");
+    {% endif %}
+{% endfor %}
+
+function getChangeClass(val) {
+    if (typeof val !== "string") return "change-even";
+    if (val === "-") return "change-even";
+    const num = parseFloat(val.replace('%',''));
+    if (isNaN(num)) return "change-even";
+    if (num >= 5) return "change-up";    // +5% 이상이면 green
+    if (num <= -5) return "change-down"; // -5% 이하이면 red
+    return "change-even";
+}
+
+
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+const ws = new WebSocket(`${protocol}://${location.host}/ws/trade?coins=${coins.join(",")}`);
+const tradeAmountHistory = {};
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const market = data.market;
+    const isBid = data.ask_bid === "BID";
+    const tradeAmount = data.trade_price * data.trade_volume;
+
+    // tradeAmountHistory 초기화
+    if (!tradeAmountHistory[market]) {
+        tradeAmountHistory[market] = { bid: [], ask: [] };
+    }
+
+    // 배열에 금액 push, 30개 초과시 shift
+    if (isBid) {
+        tradeAmountHistory[market].bid.push(tradeAmount);
+        if (tradeAmountHistory[market].bid.length > 30) {
+            tradeAmountHistory[market].bid.shift();
+        }
+    } else {
+        tradeAmountHistory[market].ask.push(tradeAmount);
+        if (tradeAmountHistory[market].ask.length > 30) {
+            tradeAmountHistory[market].ask.shift();
+        }
+    }
+
+    // 누적금액 계산
+    const bidSum = tradeAmountHistory[market].bid.reduce((a, b) => a + b, 0);
+    const askSum = tradeAmountHistory[market].ask.reduce((a, b) => a + b, 0);
+
+    // 해당 마켓의 tr 찾기
+    $('#dataTable tbody tr').each(function() {
+        const $row = $(this);
+        const coinSymbol = $row.find('td:first').text().trim();
+        if ("KRW-" + coinSymbol === market || coinSymbol === market.replace("KRW-", "")) {
+            if (isBid) {
+                // 매수 체결량
+                $row.find('.ordsumbid').text(data.trade_volume);
+                // 매수 금액
+                $row.find('.bidamt').text(numberWithCommas(tradeAmount.toFixed(0)));
+                // 30개 누적 매수 금액
+                $row.find('.bidamt30').text(numberWithCommas(bidSum.toFixed(0)));
+            } else {
+                // 매도 체결량
+                $row.find('.ordsumask').text(data.trade_volume);
+                // 매도 금액
+                $row.find('.askamt').text(numberWithCommas(tradeAmount.toFixed(0)));
+                // 30개 누적 매도 금액
+                $row.find('.askamt30').text(numberWithCommas(askSum.toFixed(0)));
+            }
+        }
+    });
+};
+
+ws.onclose = function() {
+    console.log("WebSocket closed");
+};
+
+
+function safeParseFloat(val) {
+    if (typeof val === "undefined" || val === null) return 0;
+    let v = parseFloat(val.toString().replace(/,/g, ''));
+    return isNaN(v) ? 0 : v;
+}
+
+function numberWithCommas(x) {
+    x = x.toString();
+    var parts = x.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length > 1 ? parts[0] + "." + parts[1] : parts[0];
+}
+
+function numberNoneCommas(x) {
+    return x.toString().replace(/[\D\s\._\-]+/g, "");
+}
+
+
+</script>
+
+</body>
+</html>

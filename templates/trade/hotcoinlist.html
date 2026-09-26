@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include '/comm/adheader.html' %}
+</head>
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h5 class="m-0 font-weight-bold text-primary">주문금액 상위 30위 목록</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" width="100%" cellspacing="0">
+                                <colgroup>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                </colgroup>
+                                <tr>
+                                    <td style="text-align: center">
+                                        수집 일자
+                                    </td>
+                                    <td style="text-align: center; position: relative;">
+                                        {{ orderbooks[0][8] }} <br> ({{ time_diff }} 이전)
+                                        {% if reloadable == "K" %}
+                                        <button
+                                                style="position: absolute; right: 8px; top: 8px; background: none; border: none; cursor: pointer;"
+                                                title="리로드"
+                                                onclick="window.location.href='/hotcoin_reload/{{ userNo }}'">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"
+                                                 fill="currentColor" viewBox="0 0 16 16">
+                                                <path d="M8 3a5 5 0 1 1-4.546 2.914.5.5 0 1 0-.908-.418A6 6 0 1 0 8 2v1z"/>
+                                                <path d="M8 1.5a.5.5 0 0 0-.5.5v3a.5.5 0 0 0 .5.5h3a.5.5 0 0 0 0-1H8.5V2a.5.5 0 0 0-.5-.5z"/>
+                                            </svg>
+                                        </button>
+                                        {% endif %}
+                                    </td>
+
+                                    <td style="text-align: center">
+                                        설정금액
+                                    </td>
+                                    <td style="text-align: center">
+                                        <input type="text" id="setupamt" name="setupamt" class="form-control"
+                                               style="width:auto;text-align: right;" value="100,000"
+                                               oninput="limitBprice(this)" onblur="formatBpriceOnBlur(this)">
+                                    </td>
+                                    <td style="text-align: center">
+                                        <button class="form-control btn btn-primary" id="applySelectedBtn">선택 설정 적용
+                                        </button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="text-align: center">전체 매수 요청 금액</td>
+                                    <td style="text-align: right">{{ "{:,.0f}".format(hotamt[1]) }}</td>
+                                    <td style="text-align: center">전체 매도 요청 금액</td>
+                                    <td style="text-align: right">{{ "{:,.0f}".format(hotamt[2]) }}</td>
+                                    <td style="text-align: right">(매수-매도) {{ "{:,.0f}".format(hotamt[1]-hotamt[2]) }}</td>
+                                </tr>
+                            </table>
+                        </div>
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="listTable" width="100%" cellspacing="0">
+                                <colgroup>
+                                    <col width="5%"/>
+                                    <col width="15%"/>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                    <col width="20%"/>
+                                    <col width="10%"/>
+                                    <col width="10%"/>
+                                </colgroup>
+                                <thead style="text-align: center">
+                                <tr>
+                                    <td style="text-align: center">순위</td>
+                                    <td>코인명</td>
+                                    <td style="text-align: center" id="">총매수금액</td>
+                                    <td>총매도금액</td>
+                                    <td>총합계</td>
+                                    <td>비율(매수/매도)</td>
+                                    <td>설정추가</td>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% if orderbooks %}
+                                {% for orderbook in orderbooks %}
+                                <tr>
+                                    <td style="text-align: center" class="setup-coin-item">{{ orderbook[2] }}</td>
+                                    <td style="text-align: center"><a
+                                            href="https://upbit.com/exchange?code=CRIX.UPBIT.{{ orderbook[3] }}">{{
+                                        orderbook[3] }}</a></td>
+                                    <td style="text-align: right">{{ "{:,.0f}".format(orderbook[4]) }}</td>
+                                    <td style="text-align: right">{{ "{:,.0f}".format(orderbook[5]) }}</td>
+                                    <td style="text-align: right">{{ "{:,.0f}".format(orderbook[6]) }}</td>
+                                    <td style="text-align: right">{{ "{:.2f}".format(orderbook[7]) }}%</td>
+                                    <td style="text-align: center">
+                                        <input type="checkbox"
+                                               name="chkYN"
+                                               id="chkYN{{ orderbook[2] }}"
+                                               value="{{ orderbook[3] }}"
+                                               {% for trsetup in trsetups %}
+                                               {% if trsetup["coinName"] == orderbook[3] %}
+                                        disabled
+                                        {% endif %}
+                                        {% endfor %}
+                                        >
+                                    </td>
+                                </tr>
+                                {% endfor %}
+                                {% endif %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Bootstrap core JavaScript-->
+
+{% include '/comm/adscript.html' %}
+{% include '/comm/adscripttable.html' %}
+</body>
+<script>
+
+    $(document).ready(function () {
+        $('#listTable').DataTable({
+            "pageLength": 30,
+            "paging": true,
+            "searching": true,
+            "ordering": true,
+            "info": true
+        });
+    });
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function numberNoneCommas(x) {
+        return x.toString().replace(/[\D\s\._\-]+/g, "");
+    }
+
+    function limitBprice(input) {
+        let raw = input.value.replace(/[^0-9]/g, '');
+        let max = 5000000;
+        let val = parseInt(raw, 10) || 0;
+        if (val > max) val = max;
+        input.value = val === 0 ? '' : val; // 0이면 빈 값으로
+    }
+
+    function formatBpriceOnBlur(input) {
+        let raw = input.value.replace(/[^0-9]/g, '');
+        let max = 5000000;
+        let min = 5000;
+        let val = parseInt(raw, 10) || 0;
+        if (val > max) val = max;
+        if (val < min) val = min;
+        input.value = numberWithCommas(val);
+    }
+
+    async function insertsetup(coinn) {
+        const uno = {{ userNo }};
+        let setamontRaw = $('#setupamt').val().replace(/,/g, '');
+        const setamont = parseFloat(setamontRaw);
+        try {
+            const response = await fetch(`/insertsetup/${uno}/${coinn}/${setamont}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+            if (response.redirected) {
+            } else if (response.status === 303) {
+                const redirectUrl = response.headers.get('Location');
+                if (redirectUrl) {
+                } else {
+                }
+            } else if (response.ok) {
+            } else {
+                alert('설정 추가에 실패했습니다.');
+            }
+        } catch (error) {
+            alert('오류가 발생했습니다.');
+            console.error(error);
+        }
+    }
+
+    document.getElementById('applySelectedBtn').addEventListener('click', async function (e) {
+        e.preventDefault();
+        const checkedCoins = Array.from(document.querySelectorAll('input[name="chkYN"]:checked:not(:disabled)'));
+        if (checkedCoins.length === 0) {
+            alert('선택된 코인이 없습니다.');
+            return;
+        }
+        await Promise.all(
+            checkedCoins.map(checkbox => insertsetup(checkbox.value))
+        );
+        window.location.href = '/hotcoin_list/{{ userNo }}';
+    });
+
+
+</script>
+</html>

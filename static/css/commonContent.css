@@ -1,0 +1,228 @@
+@charset "utf-8";
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+table{
+    font-size: 0.8rem;
+}
+
+table > thead{
+    font-family: 'Lato', sans-serif;
+}
+
+table > thead > tr:first-child > th{
+    background-color: #EAEAEA;
+}
+
+#foo-table_wrapper{
+    width: 87vw;
+}
+
+/*commonBodyContents 시작*/
+#commonBodyContents {
+    width: 100%;
+    display:flex;
+    flex-wrap: nowrap;
+}
+/*commonBodyContents>commonSideMenu 시작*/
+#sideMenu {
+    width: 10vw;
+    height:100%;
+    box-shadow: 0px 2px 10px rgb(0 0 0 / 10%);
+}
+
+#sideMenu>ul object img{
+    width:24px;
+    padding-top:10px;
+}
+
+#sideMenu>ul>div object img{
+    width:24px;
+}
+
+#sideMenu ul:not(#panel){
+    width:100%;
+}
+
+.sideMenu ul li {
+    line-height: 52px;
+    padding-left:10px;
+    font-family:'NanumSquareRound';
+}
+
+.sideMenu ul li a{
+    color:#fff;
+}
+
+.sideMenu ul li a span:not(#slideSpan) {
+    font-size:14px;
+    margin-left:8px;
+}
+
+.sideMenu ul li #panel li a {
+    font-size: 1.2rem;
+    color: #49535b;
+}
+
+.sideMenu ul li a img {
+    vertical-align: sub;
+}
+
+.sideMenu ul li a #slideSpan {
+    float: right;
+    margin-right: 15px;
+    font-weight: 400;
+    font-size: 16px;
+    opacity: 0.8;
+}
+
+.sideMenu ul li a.active #slideSpan {
+    font-size: 24px;
+}
+
+#business {
+    /* background-color:rgb(84 84 84); */
+    background-color: #f9f9f9;
+    /* background-color:#2b3c4d; */
+}
+/*commonBodyContents>commonSideMenu 끝*/
+
+/*commonBodyContents>commonContent 시작*/
+#commonContent {
+    width:100%;
+    padding:12px 12px 10px 12px;
+    box-sizing: border-box;
+    display:grid;
+    overflow: hidden;
+}
+
+#commonContent > form{
+    background-color: #fff;
+}
+
+#commonContent > form > .menuCustomHeader{
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+#commonContent > form > .menuCustomHeader > div:nth-child(1){
+    width: 100%;
+}
+
+#commonContent > form > .menuCustomHeader > div:nth-child(1) > span{
+    font-size: 2.5rem;
+    font-weight: 600;
+}
+
+#commonContent > form > .menuCustomHeader > .menuSelectContent{
+    padding-right: 10px;
+}
+
+#commonContent>div {
+    width: 100%;
+    background: #fff;
+    grid-row: span 2;
+    box-shadow: 0px 2px 14px rgb(0 0 0 / 12%);
+}
+
+#commonContent>div>div hr {
+    float:left;
+    width:2.5px;
+    height:28px;
+    background-color:#332E85;
+}
+
+#commonContent>div>div span {
+    margin-left:8px;
+    color:#332E85;
+    font-family: 'NanumSquareRound';
+    font-size:15px;
+    line-height:36px;
+}
+
+/*topSearchWrap 시작*/
+#commonContent .container .topSearchWrap {
+    width:100%;
+    overflow: hidden;
+}
+
+#commonContent > .container > .topSearchWrap > div > div {
+    display: flex;
+    align-items: center;
+}
+
+#commonContent > .container > .topSearchWrap > div > div > div {
+    padding-left: 5px;
+    padding-right: 5px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div{
+    display: flex;
+    align-items: center;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:first-child{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:first-child > div:last-child{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: right;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child{
+    padding: 5px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div > div{
+    padding-left: 5px;
+    padding-right: 10px;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > button > img{
+    width: 1.2vw;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > input{
+    border:1px solid #ccc;
+    margin-left: 5px;
+    margin-right: 5px;
+    border-radius: 15px;
+    padding-left: 5px;
+    width: 84vw;
+}
+
+#commonContent > .container > .topSearchWrap > div > .search > div:last-child > button{
+    border: 0;
+    background-color: #ffffff;
+}
+
+#commonContent .container .topSearchWrap div form input:focus,
+#commonContent .container .topSearchWrap div:last-child form input[type="search"]:focus {
+    border:1px solid #6bbafa;
+    box-shadow:  0px 0px 8px rgb(134 192 239 / 50%);
+    outline: 0;
+}
+
+/*topSearchWrap 끝*/
+
+::-webkit-scrollbar {
+    width: 0.6em;
+    height:0.6em;
+}
+
+::-webkit-scrollbar-track {
+    margin-block: 0.5em;
+}
+/*commonBodyContents>commonContent 끝*/
+/*commonBodyContents 끝*/
+
+
+/*1920 commonBodyContents 시작*/
+#sideMenu ul:not(#panel), #commonContent {
+    height:calc(100vh - 40px);
+}

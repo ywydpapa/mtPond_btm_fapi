@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    {% include '/comm/adheader.html' %}
+<body id="page-top">
+<style>
+.trade-toggle {
+    user-select: none;
+}
+
+.toggle-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.toggle-label {
+    position: relative;
+    display: inline-block;
+    width: 54px;
+    height: 28px;
+    background: #cfd4da;
+    border-radius: 28px;
+    cursor: pointer;
+    transition: background .25s;
+    margin: 0;
+}
+ td:has(#chk1) { display: flex; justify-content: center; /* 가로 중앙 / align-items: center; / 세로 중앙 / } / 간격 조정 */ td:has(#chk1) .trade-toggle { gap: 8px; }
+
+.toggle-label .toggle-handle {
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 22px;
+    height: 22px;
+    background: #fff;
+    border-radius: 50%;
+    box-shadow: 0 2px 4px rgba(0,0,0,.25);
+    transition: transform .25s;
+}
+
+.toggle-input:focus + .toggle-label {
+    outline: 2px solid #80bdff;
+    outline-offset: 2px;
+}
+
+.toggle-input:checked + .toggle-label {
+    background: linear-gradient(90deg,#4e73df,#1cc88a);
+}
+
+.toggle-input:checked + .toggle-label .toggle-handle {
+    transform: translateX(26px);
+}
+
+.toggle-state-text {
+    font-weight: 600;
+    font-size: 0.9rem;
+    width: 38px;
+    text-align: left;
+    color: #6c757d;
+    transition: color .25s;
+}
+
+.toggle-input:checked ~ .toggle-state-text {
+    color: #1cc88a;
+}
+</style>
+
+<!-- Page Wrapper -->
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+                    </div>
+                <!-- Page Heading -->
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable1" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center">
+                                                <select id="selcoin1" name="selcoin1" class="form-control"
+                                                        data-api-endpoint="http://ywydpapa.iptime.org:8000/api/top30trend"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td>
+                                                <div style="display: flex; width: 100%; text-align: right;">
+                                                    <span id="curtrade1-price" style="flex: 1;"></span>
+                                                    <span id="curtrade1-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee; color: green;"></span>
+                                                    <span id="curtrade1-ask" style="flex: 1; color: blue;"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable2" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center">
+                                                <select id="selcoin2" name="selcoin2" class="form-control"
+                                                        data-api-endpoint="http://ywydpapa.iptime.org:8000/api/top30trend"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td>
+                                                <div style="display: flex; width: 100%; text-align: right;">
+                                                    <span id="curtrade2-price" style="flex: 1;"></span>
+                                                    <span id="curtrade2-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee; color: green;"></span>
+                                                    <span id="curtrade2-ask" style="flex: 1; color: blue;"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered" id="dataTable3" width="100%" cellspacing="0">
+                                        <tbody>
+                                        <tr>
+                                            <td style="text-align: center">설정 코인</td>
+                                            <td style="text-align: center">
+                                                <select id="selcoin3" name="selcoin3" class="form-control"
+                                                        data-api-endpoint="http://ywydpapa.iptime.org:8000/api/top30trend"></select>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">현재가/(매수액/매도액)</td>
+                                            <td>
+                                                <div style="display: flex; width: 100%; text-align: right;">
+                                                    <span id="curtrade3-price" style="flex: 1;"></span>
+                                                    <span id="curtrade3-bid" style="flex: 1; border-left: 1px solid #eee; border-right: 1px solid #eee; color: green;"></span>
+                                                    <span id="curtrade3-ask" style="flex: 1; color: blue;"></span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- ... existing code ... -->
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="trendChart1" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="trendChart2" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4">
+                        <div class="card shadow mb-4">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">코인트렌드</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="card-body" style="height: 90%; display: flex; align-items: center; justify-content: center;">
+                                    <div class="chart-area" style="width: 90%; height: 90%;">
+                                        <canvas id="trendChart3" style="width:100%; height:100%;"></canvas>
+                                    </div>
+                                </div>                            </div>
+                            <div class="card-footer">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                        <div class="card ">
+                            <div class="card-header py-3">
+                                <h6 class="m-0 font-weight-bold text-primary">거래 설정 조정</h6>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-bordered">
+                                        <colgroup>
+                                            <col style="width: 50%;">
+                                            <col style="width: 50%;">
+                                        </colgroup>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">거래시작</h6>
+                                            </td>
+                                            <td class="td-center-toggle">
+                                                <div class="trade-toggle d-flex align-items-center">
+                                                    <input type="checkbox" id="chk1" class="toggle-input" {% if onoffstat == 'Y' %}checked{% endif %}/>
+                                                    <label for="chk1" class="toggle-label" aria-label="거래 시작 토글">
+                                                    <span class="toggle-handle"></span>
+                                                    </label>
+                                                        <span id="chk1-state" class="toggle-state-text mb-0">  OFF</span>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">거래시작 금액</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][4] | currency }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">추가매수 금액</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][5]|currency }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">매수한계 금액</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][6]|currency }}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">손절 설정치</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][11]}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">최대 구매 코인 수</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][13]}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">마틴시스템 적용</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][14]}}
+                                            </td>
+                                        </tr>
+                                        <tr>
+                                            <td style="text-align: center">
+                                                <h6 class="m-0 font-weight-bold text-primary mb-0">손절 적용</h6>
+                                            </td>
+                                            <td style = "text-align: right">
+                                                {{ mysettings[0][15]}}
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-12">
+                    <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">주문 현황</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="tradestat" name="tradestat" width="100%"
+                                   cellspacing="0">
+                                <thead>
+                                <tr style="text-align: center;vertical-align: middle">
+                                    <th>거래일시</th>
+                                    <th>코인명</th>
+                                    <th>거래종류</th>
+                                    <th>시가비율</th>
+                                    <th>주문가격</th>
+                                    <th>주문수량</th>
+                                    <th>주문금액</th>
+                                    <th>미체결량</th>
+                                    <th>예상수수료</th>
+                                    <th>코인 관리</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for items in myorders %}
+                                    <tr>
+                                        <td style="text-align: center">{{ items['created_at'][:10] }} {{ items['created_at'][11:19] }}</td>
+                                        <td style="text-align: center">{{ items['market'] }}</td>
+                                        <td style="text-align: center">{% if items['side'] == 'ask' %}<span
+                                                style="color: blue; ">매도</span>{% else %}
+                                            <span style="color: red; ">매수</span>{% endif %} </td>
+                                        <td style="text-align: center" class="cudiff" ></td>
+                                        <td style="text-align: right" class="oprice">{% if items['price']|float < 1 %}{{ '{:,.6f}'.format(items['price']|float) }}{% elif items['price']|float < 100 %}{{ '{:,.2f}'.format(items['price']|float) }}{% else %}
+                                            {{ '{:,.0f}'.format(items['price']|float) }}{% endif %}</td>
+                                        <td style="text-align: right" class="ovol">{{ items['volume'] }}</td>
+                                        <td style="text-align: right" class="ovalue">{{ "{:,.0f}".format(items['volume']|float * items['price']|float) }}</td>
+                                        <td style="text-align: right">{{ items['remaining_volume'] }}</td>
+                                        <td style="text-align: right">{{ "{:,.0f}".format(items['volume']|float * items['price']|float * 0.0005) }}</td>
+                                        <td>
+                                        <td>
+                                              <button class="btn form-control btn-primary btn-cancel"
+                                                      data-uno="{{ user_No }}"
+                                                      data-setkey="{{ setkey }}"
+                                                      data-uuid="${items["uuid"]}">
+                                                거래 취소
+                                              </button>
+                                        </td>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                </div>
+                <!-- DataTales Example -->
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Bootstrap core JavaScript-->
+{% include '/comm/adscript.html' %}
+{% include './comm/adscriptchart.html' %}
+
+<script>
+const selectIds = ['selcoin1', 'selcoin2', 'selcoin3'];
+let coinList = [];
+let selectedCoins = [];
+const charts = {};
+const recentTrades = {};
+const priceHistory = {};
+const currentPrices = {};
+
+try {
+  console.log('[init] define cancelorder');
+  window.cancelorder = function(uno, setkey, uuid) {
+    if (!confirm('본 거래를 취소 하시겠습니까?')) return;
+    const formData = new FormData();
+    formData.append('uno', uno);
+    formData.append('setkey', setkey);
+    formData.append('uuid', uuid);
+
+    $.ajax({
+      type: 'POST',
+      url: '/cancelOrder',
+      data: formData,
+      processData: false,
+      contentType: false,
+      success: (res) => {
+        if (res && (res.success === true || res === 'OK' || res === 'SUCCESS')) {
+          fetchOrderListAndUpdate?.();
+        } else {
+          alert((res && (res.message || res.error)) || '거래 취소 실패');
+        }
+      },
+      error: (xhr, status, err) => {
+        console.error('cancelOrder error:', status, err, xhr?.responseText);
+        alert('네트워크/서버 오류');
+      }
+    });
+  };
+
+  // 이벤트 위임: 동적 행에도 동작
+  $(document).on('click', '.btn-cancel', function() {
+    const $b = $(this);
+    window.cancelorder($b.data('uno'), $b.data('setkey'), $b.data('uuid'));
+  });
+} catch(e) {
+  console.error('[init] cancelorder define failed:', e);
+}
+
+function numberWithCommas(x) {
+    if (x == null) return '';
+    return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+}
+
+function fillSelects(selectedValues = {}) {
+    selectIds.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        sel.innerHTML = '';
+        coinList.forEach(coin => {
+            const opt = document.createElement('option');
+            opt.value = coin;
+            opt.textContent = coin;
+            if (Object.values(selectedValues).includes(coin) && selectedValues[id] !== coin) {
+                opt.disabled = true;
+            }
+            sel.appendChild(opt);
+        });
+        if (selectedValues[id]) {
+            sel.value = selectedValues[id];
+        } else {
+            for (const option of sel.options) {
+                if (!option.disabled) {
+                    sel.value = option.value;
+                    break;
+                }
+            }
+        }
+    });
+}
+
+function getSelectedCoins() {
+    return selectIds.map(id => {
+        const sel = document.getElementById(id);
+        return sel ? sel.value : '';
+    });
+}
+
+function createTrendChart(canvasId, color) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    return new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: Array(20).fill(''),
+            datasets: [{
+                label: '현재가',
+                data: [],
+                borderColor: color,
+                backgroundColor: color.replace('1)', '0.1)'),
+                pointRadius: 0,
+                borderWidth: 2,
+                tension: 0.2
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: {
+                x: { display: false },
+                y: { display: true }
+            }
+        }
+    });
+}
+
+function updateTrendChart(idx, price) {
+    const selected = getSelectedCoins();
+    const market = selected[idx];
+    if (!priceHistory[market]) priceHistory[market] = [];
+    priceHistory[market].push(price);
+    if (priceHistory[market].length > 20) {
+        priceHistory[market].shift();
+    }
+    const chart = charts[market];
+    if (chart) {
+        chart.data.datasets[0].data = priceHistory[market];
+        chart.update();
+    }
+}
+
+let ws = null;
+
+function connectWebSocket() {
+    if (ws) ws.close();
+
+    selectedCoins = getSelectedCoins();
+    const protocol = location.protocol === "https:" ? "wss" : "ws";
+    ws = new WebSocket(`${protocol}://${location.host}/ws/trade?coins=${selectedCoins.join(",")}`);
+
+    selectedCoins.forEach((coin, idx) => {
+        recentTrades[coin] = [];
+        priceHistory[coin] = [];
+        currentPrices[coin] = null;
+        const canvasId = `trendChart${idx+1}`;
+        const color = ['rgba(255,99,132,1)','rgba(54,162,235,1)','rgba(255,206,86,1)'][idx];
+        charts[coin] = createTrendChart(canvasId, color);
+
+        document.getElementById(`curtrade${idx+1}-price`).innerText = '-';
+        document.getElementById(`curtrade${idx+1}-bid`).innerText = '-';
+        document.getElementById(`curtrade${idx+1}-ask`).innerText = '-';
+    });
+
+    ws.onmessage = function(event) {
+        const data = JSON.parse(event.data);
+        const market = data.market || data.coin;
+        if (!market || !selectedCoins.includes(market)) return;
+
+        if (!recentTrades[market]) recentTrades[market] = [];
+        recentTrades[market].push(data);
+        if (recentTrades[market].length > 20) {
+            recentTrades[market].shift();
+        }
+
+        let bidSumKRW = 0;
+        let askSumKRW = 0;
+        recentTrades[market].forEach(trade => {
+            if (trade.ask_bid === "BID") {
+                bidSumKRW += trade.trade_volume * trade.trade_price;
+            } else if (trade.ask_bid === "ASK") {
+                askSumKRW += trade.trade_volume * trade.trade_price;
+            }
+        });
+
+        const idx = selectedCoins.indexOf(market);
+
+        document.getElementById(`curtrade${idx+1}-price`).innerText = numberWithCommas(data.trade_price);
+        document.getElementById(`curtrade${idx+1}-bid`).innerText = numberWithCommas(bidSumKRW.toFixed(0));
+        document.getElementById(`curtrade${idx+1}-ask`).innerText = numberWithCommas(askSumKRW.toFixed(0));
+
+        if (!priceHistory[market]) priceHistory[market] = [];
+        priceHistory[market].push(data.trade_price);
+        if (priceHistory[market].length > 20) {
+            priceHistory[market].shift();
+        }
+        const chart = charts[market];
+        if (chart) {
+            chart.data.datasets[0].data = priceHistory[market];
+            chart.update();
+        }
+
+        if (typeof updateCudiff === "function") updateCudiff();
+    };
+
+    ws.onerror = function(e) {
+        console.error("WebSocket error:", e);
+    };
+}
+
+function onSelectChange() {
+    const selectedValues = {};
+    selectIds.forEach(id => {
+        const sel = document.getElementById(id);
+        if (!sel) return;
+        selectedValues[id] = sel.value;
+    });
+    fillSelects(selectedValues);
+    connectWebSocket();
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    // chk1 초기 텍스트 동기화
+    const chk = document.getElementById('chk1');
+    const state = document.getElementById('chk1-state');
+    if (chk && state) {
+        state.textContent = chk.checked ? 'ON' : 'OFF';
+    }
+
+    fetch('http://becog.iptime.org:8088/api/top30coins')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.markets && Array.isArray(data.markets)) {
+                coinList = data.markets;
+                const initialValues = {
+                    selcoin1: coinList[0] || '',
+                    selcoin2: coinList[1] || '',
+                    selcoin3: coinList[2] || ''
+                };
+                fillSelects(initialValues);
+                selectIds.forEach(id => {
+                    const sel = document.getElementById(id);
+                    if (!sel) return;
+                    sel.addEventListener('change', onSelectChange);
+                });
+                connectWebSocket();
+            }
+        });
+    const orderlist = {{ myorders | default([]) | tojson | safe }};
+    updateOrderTable(orderlist);
+});
+
+// 낙관적 업데이트: 즉시 텍스트 변경, 실패 시 원복
+$('#chk1').on('change', function() {
+    const userno = {{ user_No  }};
+    const isChecked = this.checked;          // 새 상태
+    const active = isChecked ? 'Y' : 'N';
+    const $toggle = $(this);
+    const $state = $('#chk1-state');
+    // 1) 즉시 텍스트 업데이트
+    $state.text(isChecked ? 'ON' : 'OFF');
+    // 2) 요청 전 disable
+    $toggle.prop('disabled', true);
+    $.ajax({
+        url: `/api/mtpondsetonoff/${userno}/${active}`,
+        method: 'POST',
+        success: function(res){
+            // 성공 시 별도 처리 불필요(이미 반영됨)
+        },
+        error: function(){
+            alert('업데이트 실패');
+            // 3) 상태 원복
+            const reverted = !isChecked;
+            $toggle.prop('checked', reverted);
+            $state.text(reverted ? 'ON' : 'OFF');
+        },
+        complete: function(){
+            $toggle.prop('disabled', false);
+        }
+    });
+});
+
+function fetchOrderListAndUpdate() {
+  $.ajax({
+    type: 'GET',
+    url: `/rest_getmtorder/{{ user_No }}/{{ setkey }}`,
+    dataType: 'json',
+    success: function(res) {
+      console.log('rest_getorder response:', res);
+      let list = null;
+      if (Array.isArray(res)) list = res;
+      else if (res && Array.isArray(res.data)) list = res.data;
+      else if (res && Array.isArray(res.list)) list = res.list;
+      else if (res && res.success === true && Array.isArray(res.orders)) list = res.orders;
+
+      if (list) updateOrderTable(list);
+      else console.warn('No order list found in response');
+    },
+    error: function(xhr, status, err) {
+      console.error('rest_getorder failed:', status, err, xhr?.responseText);
+    }
+  });
+}
+
+function updateOrderTable(orderlist) {
+    let tbody = "";
+    orderlist.forEach(items => {
+        let created_at = items['created_at'].slice(0, 10) + " " + items['created_at'].slice(11, 19);
+        let market = items['market'];
+        let side = items['side'] === 'ask' ? '<span style="color: blue;">매도</span>' : '<span style="color: red;">매수</span>';
+        let price = parseFloat(items['price']);
+        let priceStr = price < 1 ? price.toFixed(6) : (price < 100 ? price.toFixed(2) : price.toFixed(0));
+        priceStr = numberWithCommas(priceStr);
+        let volume = items['volume'];
+        let ovalue = numberWithCommas((parseFloat(items['volume']) * parseFloat(items['price'])).toFixed(0));
+        let remaining = items['remaining_volume'];
+        let fee = numberWithCommas((parseFloat(items['volume']) * parseFloat(items['price']) * 0.0005).toFixed(0));
+        let row = `
+        <tr>
+            <td style="text-align: center">${created_at}</td>
+            <td style="text-align: center">${market}</td>
+            <td style="text-align: center">${side}</td>
+            <td style="text-align: center" class="cudiff"></td>
+            <td style="text-align: right" class="oprice">${priceStr}</td>
+            <td style="text-align: right" class="ovol">${volume}</td>
+            <td style="text-align: right" class="ovalue">${ovalue}</td>
+            <td style="text-align: right">${remaining}</td>
+            <td style="text-align: right">${fee}</td>
+            <td>
+                 <button class="btn form-control btn-primary btn-cancel"
+                    data-uno="{{ user_No }}"
+                    data-setkey="{{ setkey }}"
+                    data-uuid="${items["uuid"]}">
+                    거래 취소
+                </button>
+            </td>
+        </tr>
+        `;
+        tbody += row;
+    });
+    const tableBody = document.querySelector('#tradestat tbody');
+    if (tableBody) tableBody.innerHTML = tbody;
+
+    // 시가비율(cudiff) 갱신 로직이 별도라면 필요 시 호출
+    if (typeof updateCudiff === "function") updateCudiff();
+}
+</script>
+</body>
+</html>

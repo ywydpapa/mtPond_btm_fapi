@@ -1,0 +1,49 @@
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="description" content="">
+<meta name="author" content="coredjk">
+<title>Mt.Pond AI trader</title>
+<!-- Custom fonts for this template-->
+<link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet"
+      type="text/css">
+<link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i"
+      rel="stylesheet">
+<!-- Custom styles for this template-->
+<link href="/static/css/sb-admin-2.min.css" rel="stylesheet">
+<style>
+    /* 로딩 화면 스타일 */
+    #loading {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(255, 255, 255, 0.7);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        z-index: 9999;
+        visibility: hidden;
+    }
+
+    .spinner {
+        border: 4px solid #f3f3f3; /* 배경색 */
+        border-top: 4px solid #3498db; /* 애니메이션 색 */
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 2s linear infinite;
+    }
+
+    @keyframes spin {
+        0% {
+            transform: rotate(0deg);
+        }
+        100% {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+

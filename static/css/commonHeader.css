@@ -1,0 +1,117 @@
+@charset "utf-8";
+#loadingDiv{
+    width: 100%; 
+    height: 100%; 
+    position:absolute; 
+    background-color: #D5D5D5; 
+    opacity: 0.3;
+}
+    
+#commonTopHeader {
+    display: grid;
+    grid-template-columns: 172px 1fr 200px;
+    align-items: center;
+    height:40px;
+    background-color: #fff;
+    box-shadow: 0px 2px 10px rgb(0 0 0 / 10%);
+    position: relative;
+    z-index: 9;
+}
+
+#commonTopHeader .mainTopMenu ul li{
+    width:126px;
+}
+
+#commonTopHeader #mainTopLogo img {
+    width:132px;
+    margin-left:8px;
+}
+
+/* #commonTopHeader #mainInfo 시작*/
+#commonTopHeader #mainInfo {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+}
+
+/* #commonTopHeader #mainInfo form {
+    position: relative;
+    cursor: pointer;
+} */
+
+#commonTopHeader #mainInfo form[data-keyword="LOGOUT"] {
+    cursor: pointer;
+}
+
+#commonTopHeader #mainInfo form:first-child object{
+    float: left;
+}
+
+#commonTopHeader #mainInfo form:first-child a{
+    display: flex;
+    align-items: center;
+}
+
+#commonTopHeader #mainInfo form:first-child object img{
+    width:22px;
+    margin-right: 4px;
+}
+
+#commonTopHeader #mainInfo form:last-child {
+    float:right;
+    width:34px;
+    margin:0 16px 0 8px;
+}
+
+#commonTopHeader #mainInfo form:last-child object img{
+    width:30px;
+}
+/* #commonTopHeader #mainInfo 끝*/
+
+/*topSearchWrap commonTopHeader 시작*/
+#commonTopHeader .mainTopMenu {
+    background-color:#fff;
+    display: grid;
+    overflow: hidden;
+    position: relative;
+    float: left;
+    margin-right: 8px;
+}
+
+#commonTopHeader .mainTopMenu ul {
+    height:100%;
+    margin:0;
+}
+
+#commonTopHeader .mainTopMenu ul li{
+    height:100%;
+    float:left;
+    text-align:center;
+}
+
+#commonTopHeader .mainTopMenu ul li button{
+    font-size: 14px;
+    font-family:'NanumSquareRound';
+    border:0;
+    padding:2px 8px;
+    margin:0 4px;
+    cursor:pointer;
+    background-color: #fff;
+    height:40px;
+    box-sizing: border-box;
+    /* border-bottom:1px solid blue; */
+}
+
+#commonTopHeader .mainTopMenu ul li .color {
+    border-bottom:1px solid blue;
+}
+
+#commonTopHeader .mainTopMenu ul li .checked {
+    background-color: #5a7fc4;
+    color:#fff;
+}
+
+#commonTopHeader .mainTopMenu ul li button.active{
+    background:linear-gradient(to bottom, #ffffff 95%, #302D81 5%);
+}
+/*topSearchWrap commonTopHeader 끝*/

@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include '/comm/adheader.html' %}
+ <style>
+    #dataTable tr td {
+  height: 44px;
+  padding-top: 0;
+  padding-bottom: 0;
+  vertical-align: middle;
+  line-height: 1.2;
+}
+  .change-up {
+    color: #22c55e; /* 초록색 */
+    font-size: 1.2em;
+  }
+  .change-down {
+    color: #ef4444; /* 빨간색 */
+    font-size: 1.2em;
+  }
+  .change-even {
+    color: #64748b; /* 중립 회색 */
+    font-size: 1.2em;
+  }
+  .hot-badge {
+    background-color: #ef4444; /* 빨간색 배경 */
+    color: white;
+    font-size: 0.7em;
+    font-weight: bold;
+    padding: 2px 5px;
+    border-radius: 4px;
+    margin-left: 5px;
+    vertical-align: middle;
+    display: inline-block;
+  }
+
+</style>
+
+</head>
+<body id="page-top">
+<!-- Page Wrapper -->
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <!-- Content Wrapper -->
+    <div id="content-wrapper" class="d-flex flex-column">
+        <!-- Main Content -->
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <!-- Begin Page Content -->
+            <div class="container-fluid">
+                <!-- Page Heading -->
+                <!-- Page Heading -->
+                <!-- DataTales Example -->
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">나의 지갑 자산현황</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                <tr style="text-align: center">
+                                    <th>자산명</th>
+                                    <th>잔고</th>
+                                    <th>거래중</th>
+                                    <th>평균매입가</th>
+                                    <th>현재가</th>
+                                    <th>변화</th>
+                                    <th>구매금액</th>
+                                    <th>평가금액</th>
+                                    <th>평가/구매(%)</th>
+                                    <th>평가/구매(원)</th>
+                                    <th>추가기능</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for coin in mycoins %}
+                                <tr>
+                                    <td class="coins" style="text-align: center">
+                                        <a href="https://upbit.com/exchange?code=CRIX.UPBIT.KRW-{{ coin['currency'] }}" target="_blank">{{ coin["currency"] }}</a>
+                                    </td>
+                                    <td class="vola" style="text-align: right"> {{ coin["balance"]|currency }}</td>
+                                    <td class="volb" style="text-align: right">{{ coin["locked"] }}</td>
+                                    <td class="aprice" style="text-align: right"> {% if coin["currency"] == 'KRW' %}1{% else %}{{
+                                        coin["avg_buy_price"] }}{% endif %}
+                                    </td>
+                                    <td class="cprice" style="text-align: right">
+                                        {% for cuprice in cuprices %}
+                                            {% if cuprice["market"].split('-')[1] == coin["currency"] %}
+                                                {{ cuprice["trade_price"] }}
+                                            {% endif %}{% if coin["currency"] == 'KRW' %}1{% endif %}
+                                        {% endfor %}
+                                    </td>
+                                    <td class="change"> </td>
+                                    <td class="cvalue" style="text-align: right"></td>
+                                    <td class="balanceprice" style="text-align: right"></td>
+                                    <td class="balancerate" style="text-align: right"></td>
+                                    <td class="balancediff" style="text-align: right"></td>
+                                    {% if coin["currency"]!="KRW" %}
+                                    <td style="display: flex; justify-content: space-between;">
+                                        <button class="btn form-control btn-primary" style="width: 48%;"
+                                                onclick="sellcoin( {{ user_No }},{{ setkey }},'{{ coin["currency"] }}',{{ coin["balance"] }})">
+                                            매도
+                                        </button>
+                                        <button class="btn form-control btn-danger" style="width: 48%;"
+                                                onclick="buycoin( {{ user_No }},{{ setkey }},'{{ coin["currency"] }}')">
+                                            매수
+                                        </button>
+                                    </td>
+                                    {% elif coin["currency"] == "KRW" %}
+                                    <td style="text-align: center">
+                                        <div style="display: flex;align-items: center;justify-content: center;gap: 1rem;margin-left: -.75rem;margin-right: -.75rem;">
+                                            <div>매도</div>
+                                            <div>
+                                                <select class="form-control" name="sellrate" id="sellrate">
+                                                    <option value=1>100%</option>
+                                                    <option value=2>50%</option>
+                                                    <option value=4>25%</option>
+                                                    <option value=10>10%</option>
+                                                    <option value=20>5%</option>
+                                                    <option value=100>1%</option>
+                                                </select>
+                                            </div>
+                                            <div>매수</div>
+                                            <div>
+                                                <input id="buyamt" name="buyamt" class="form-control" type="text"
+                                                       value="200000" placeholder="200,000" max="2000000" min="100000"
+                                                       step="50000" style="text-align: right"
+                                                       oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                                            </div>
+                                        </div>
+                                    </td>
+                                    {% endif %}
+                                </tr>
+                                {% endfor %}
+                                <tr>
+                                    <td style="text-align: center" colspan="6">현재 원화 가치 합계</td>
+                                    <td id="wonsum" style="text-align: right"></td>
+                                    <td id="estsum" style="text-align: right"></td>
+                                    <td id="sumdiff" style="text-align: right"></td>
+                                    <td colspan="3">
+                                        <div id="refresh-timer" style="font-weight:bold; color:#2563eb; text-align: center; vertical-align: middle;">
+                                            리프레시까지 남은 시간: <span id="refresh-remaining"></span>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.container-fluid -->
+        </div>
+        <!-- End of Main Content -->
+        <!-- Footer -->
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+        <!-- End of Footer -->
+    </div>
+    <!-- End of Content Wrapper -->
+</div>
+<!-- End of Page Wrapper -->
+<!-- Scroll to Top Button-->
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+<!-- Bootstrap core JavaScript-->
+
+{% include '/comm/adscript.html' %}
+
+<script>
+    let hotMarkets = [];
+
+$(document).ready(function () {
+    calcvalue();
+    startRefreshTimer();
+    setInterval(refreshWalletTable, 300000);
+
+    fetchHotCoins();
+    setInterval(fetchHotCoins, 60000);
+});
+
+let refreshIntervalSec = 300; // 5분 = 300초
+let refreshRemaining = refreshIntervalSec;
+let refreshTimerInterval = null;
+
+function startRefreshTimer() {
+    // 최초 표시
+    updateRefreshDisplay();
+
+    // 기존 타이머 있으면 제거
+    if (refreshTimerInterval) clearInterval(refreshTimerInterval);
+
+    // 1초마다 남은 시간 갱신
+    refreshTimerInterval = setInterval(function () {
+        refreshRemaining--;
+        if (refreshRemaining <= 0) {
+            refreshRemaining = refreshIntervalSec; // 리셋
+        }
+        updateRefreshDisplay();
+    }, 1000);
+}
+
+function fetchHotCoins() {
+    $.ajax({
+        url: "http://becog.iptime.org:8088/api/top30coins",
+        method: "GET",
+        success: function(res) {
+            if (res && res.markets) {
+                hotMarkets = res.markets;
+                applyHotBadges();
+            }
+        },
+        error: function(err) {
+            console.error("HOT 코인 목록을 가져오는데 실패했습니다.", err);
+        }
+    });
+}
+
+// 테이블에 HOT 배지 적용 함수
+function applyHotBadges() {
+    $("#dataTable tbody tr").each(function() {
+        let $coinCell = $(this).find(".coins");
+        if ($coinCell.length > 0) {
+            let coinName = $coinCell.find("a").text().trim();
+            if (coinName && coinName !== "KRW") {
+                let marketName = "KRW-" + coinName;
+
+                // 기존 배지가 있다면 중복 방지를 위해 제거
+                $coinCell.find(".hot-badge").remove();
+
+                // API에서 받아온 목록에 현재 코인이 포함되어 있다면 배지 추가
+                if (hotMarkets.includes(marketName)) {
+                    $coinCell.append('<span class="hot-badge">HOT</span>');
+                }
+            }
+        }
+    });
+}
+function updateRefreshDisplay() {
+    // 초 또는 분:초 형태로 표시
+    let min = Math.floor(refreshRemaining / 60);
+    let sec = refreshRemaining % 60;
+    let text = min > 0
+        ? `${min}분 ${sec < 10 ? '0' : ''}${sec}초`
+        : `${sec}초`;
+    $("#refresh-remaining").text(text);
+}
+
+// 자동 리프레시 후 타이머 리셋
+function refreshWalletTable() {
+    $.get(`/rest_getwallet/${userNo}/${setKey}`, function(res) {
+        if (res.success && res.data) {
+            updateWalletTable(res.data);
+        }
+        // 리프레시 후 타이머 리셋
+        refreshRemaining = refreshIntervalSec;
+        updateRefreshDisplay();
+    });
+}
+
+const coins = [];
+{% for coin in mycoins %}
+    {% if coin["currency"] != "KRW" %}
+        coins.push("KRW-{{ coin['currency'] }}");
+    {% endif %}
+{% endfor %}
+
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+const ws = new WebSocket(`${protocol}://${location.host}/ws/coinprice?coins=${coins.join(",")}`);
+
+let latestPrices = {};
+let updateTimer = null;
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    const market = data.market.split('-')[1];
+    const activeprice = data.current_price;
+    const change = data.change;
+
+    $("tr").each(function() {
+        // .market 셀의 텍스트와 market 값이 일치하는지 확인
+        if ($(this).find(".coins").text().trim() === market) {
+            found = true;
+            $(this).find(".cprice").text(numberWithCommas(activeprice));
+            let $changeTd = $(this).find(".change");
+            if ($changeTd.length === 0) {
+                console.warn("이 행에는 .change 셀이 없습니다:", this);
+            }
+            if (change === "RISE") {
+                $changeTd.html('<span class="change-up">&#9650;</span>');
+            } else if (change === "FALL") {
+                $changeTd.html('<span class="change-down">&#9660;</span>');
+            } else {
+                $changeTd.html('<span class="change-even">-</span>');
+            }
+        }
+    });
+
+     if (!updateTimer) {
+        updateTimer = setTimeout(() => {
+            calcvalue();
+            updateTimer = null;
+        }, 1000);
+    }
+};
+
+
+ws.onclose = function() {
+    console.log("WebSocket closed");
+};
+
+let userNo = {{ user_No }};    // 실제 템플릿 변수 사용
+let setKey = "{{ setkey }}";   // 실제 템플릿 변수 사용
+
+function refreshWalletTable() {
+    $.get(`/rest_getwallet/${userNo}/${setKey}`, function(res) {
+        if (res.success && res.data) {
+            updateWalletTable(res.data);
+        }
+    });
+}
+
+function updateWalletTable(mycoins) {
+    let $tbody = $("#dataTable tbody");
+    // 기존 행 삭제 (합계 행은 남겨둠)
+    $tbody.find("tr").not(":last").remove();
+
+    // 각 코인별로 행 추가 (템플릿에 맞게 생성)
+    mycoins.forEach(function(coin) {
+        let isKRW = coin.currency === "KRW";
+        let row = `
+        <tr>
+            <td class="coins" style="text-align: center">
+                <a href="https://upbit.com/exchange?code=CRIX.UPBIT.KRW-${coin.currency}" target="_blank">${coin.currency}</a>
+            </td>
+            <td class="vola" style="text-align: right">${numberWithCommas(coin.balance)}</td>
+            <td class="volb" style="text-align: right">${numberWithCommas(coin.locked)}</td>
+            <td class="aprice" style="text-align: right">${isKRW ? 1 : numberWithCommas(coin.avg_buy_price)}</td>
+            <td class="cprice" style="text-align: right">-</td>
+            <td class="change"></td>
+            <td class="cvalue" style="text-align: right"></td>
+            <td class="balanceprice" style="text-align: right"></td>
+            <td class="balancerate" style="text-align: right"></td>
+            <td class="balancediff" style="text-align: right"></td>
+            ${!isKRW
+                ? `<td style="display: flex; justify-content: space-between;">
+                    <button class="btn form-control btn-primary" style="width: 48%;"
+                        onclick="sellcoin(${userNo},${setKey},'${coin.currency}',${coin.balance})">매도</button>
+                    <button class="btn form-control btn-danger" style="width: 48%;"
+                        onclick="buycoin(${userNo},${setKey},'${coin.currency}')">매수</button>
+                </td>`
+                : `<td style="text-align: center">
+                    <div style="display: flex;align-items: center;justify-content: center;gap: 1rem;margin-left: -.75rem;margin-right: -.75rem;">
+                        <div>매도</div>
+                        <div>
+                            <select class="form-control" name="sellrate" id="sellrate">
+                                <option value=1>100%</option>
+                                <option value=2>50%</option>
+                                <option value=4>25%</option>
+                                <option value=10>10%</option>
+                                <option value=20>5%</option>
+                                <option value=100>1%</option>
+                            </select>
+                        </div>
+                        <div>매수</div>
+                        <div>
+                            <input id="buyamt" name="buyamt" class="form-control" type="text"
+                                value="200000" placeholder="200,000" max="2000000" min="100000"
+                                step="50000" style="text-align: right"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');"/>
+                        </div>
+                    </div>
+                </td>`
+            }
+        </tr>
+        `;
+        // 합계행 위에 삽입
+        $tbody.find("tr:last").before(row);
+    });
+
+    // 테이블 값 재계산
+    calcvalue();
+
+    applyHotBadges();
+}
+
+function safeParseFloat(val) {
+    if (typeof val === "undefined" || val === null) return 0;
+    let v = parseFloat(val.toString().replace(/,/g, ''));
+    return isNaN(v) ? 0 : v;
+}
+
+function numberWithCommas(x) {
+    x = x.toString();
+    var parts = x.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length > 1 ? parts[0] + "." + parts[1] : parts[0];
+}
+
+function numberNoneCommas(x) {
+    return x.toString().replace(/[\D\s\._\-]+/g, "");
+}
+
+
+function calcvalue() {
+    let $Aarr = $(".vola");           // 잔고
+    let $Barr = $(".volb");           // 거래중
+    let $Carr = $(".aprice");         // 평균매입가
+    let $Darr = $(".cprice");         // 현재가
+    let $Earr = $(".cvalue");         // 구매금액
+    let $Farr = $(".balanceprice");   // 평가금액
+    let $Garr = $(".balancerate");    // 평가/구매 비율
+    let $Harr = $(".balancediff");    // 평가/구매 차액
+    let wonsum = 0;
+    let estsum = 0;
+    let sumdiff = 0;
+    for (let i = 0; i < $Darr.length; i++) {
+        let aval = safeParseFloat($Aarr[i].innerText); // 잔고
+        let bval = safeParseFloat($Barr[i].innerText); // 거래중
+        let cval = safeParseFloat($Carr[i].innerText); // 평균매입가
+        let dval = safeParseFloat($Darr[i].innerText); // 현재가
+        if (cval === 0) cval = 1;
+        if (dval === 0) dval = 1;
+        let nprice = Math.round((aval + bval) * cval); // 구매금액
+        let estpr = Math.round((aval + bval) * dval);  // 평가금액
+        let estrate = nprice === 0 ? 0 : (100 - ((nprice - estpr) / nprice * 100));
+        estrate = estrate.toFixed(2);
+        wonsum += nprice;
+        estsum += estpr;
+        let baldiff = estpr - nprice;
+        $Aarr[i].innerText = numberWithCommas(aval);
+        $Barr[i].innerText = numberWithCommas(bval);
+        $Carr[i].innerText = numberWithCommas(cval);
+        $Darr[i].innerText = numberWithCommas(dval);
+        $Earr[i].innerText = numberWithCommas(nprice);
+        $Farr[i].innerText = numberWithCommas(estpr);
+        $Garr[i].innerText = estrate;
+        $Harr[i].innerText = numberWithCommas(baldiff);
+        if (estrate < 100) {
+            $Garr[i].style.color = "red";
+            $Harr[i].style.color = "red";
+        } else {
+            $Garr[i].style.color = "green";
+            $Harr[i].style.color = "green";
+        }
+    }
+    sumdiff = wonsum === 0 ? 0 : ((estsum / wonsum) * 100).toFixed(2);
+    $("#wonsum").html(numberWithCommas(wonsum));
+    $("#estsum").html(numberWithCommas(estsum));
+    $("#sumdiff").html(sumdiff);
+}
+
+function sellcoin(uno, skey, coinn, volum) {
+    if (confirm("본 코인을 시장가로 매도하시겠습니까?")) {
+        let rate = $("#sellrate option:selected").val();
+        let svolume = volum / rate;
+        $.ajax({
+            type: "POST",
+            url: `/tradesellmarket/${uno}/${skey}/${encodeURIComponent(coinn)}/${svolume}`,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                window.location.href = `/balance/${uno}`;
+            },
+            error: function (err) {
+                alert("매도 요청 실패: " + (err.responseText || ""));
+            }
+        });
+    }
+}
+
+function buycoin(uno, skey, coinn) {
+    if (confirm("본 코인을 시장가로 매수하시겠습니까?")) {
+        let costk = numberNoneCommas($("#buyamt").val());
+        $.ajax({
+            type: "POST",
+            url: `/tradebuymarket/${uno}/${skey}/${encodeURIComponent(coinn)}/${costk}`,
+            processData: false,
+            contentType: false,
+            success: (res) => {
+                window.location.href = `/balance/${uno}`;
+            },
+            error: function (err) {
+                alert("매수 요청 실패: " + (err.responseText || ""));
+            }
+        });
+    }
+}
+
+function loadTSignals() {
+    $(".tsignal").each(function () {
+        var coin = $(this).data("coin");
+        if (coin === "KRW") return; // KRW는 신호등 필요 없음
+        var $el = $(this);
+        $.ajax({
+            url: "/tsignal/" + coin.toLowerCase(),
+            method: "GET",
+            success: function (data) {
+                $el.html(data);
+            },
+            error: function () {
+                $el.html('<span style="color:gray;font-size:11px;">신호없음</span>');
+            }
+        });
+    });
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    {% include '/comm/adheader.html' %}
+    <style>
+        #dataTable tr td {
+            height: 44px;
+            vertical-align: middle;
+            line-height: 1.2;
+        }
+        .change-up { color: #22c55e; }
+        .change-down { color: #ef4444; }
+        .change-even { color: #64748b; }
+    </style>
+</head>
+<body id="page-top">
+<div id="wrapper">
+    {% include '/comm/sidebar.html' %}
+    <div id="content-wrapper" class="d-flex flex-column">
+        <div id="content">
+            {% include '/comm/adtopbar.html' %}
+            <div class="container-fluid">
+                <div class="card shadow mb-4">
+                    <div class="card-header py-3">
+                        <h6 class="m-0 font-weight-bold text-primary">코인 트렌드 실시간 모니터링</h6>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                <thead>
+                                    <tr style="text-align: center">
+                                        <th>자산명</th>
+                                        <th>실시간주문량(매수)</th>
+                                        <th>실시간주문량(매도)</th>
+                                        <th>매수/매도비(%)</th>
+                                        <th>주문량변화(10)</th>
+                                        <th>주문량변화(60)</th>
+                                        <th>주문량변화(120)</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for coin in trcoins %}
+                                    <tr>
+                                        <td style="text-align: center">
+                                            <a href="https://upbit.com/exchange?code=CRIX.UPBIT.{{ coin }}" target="_blank">{{ coin }}</a>
+                                        </td>
+                                        <td class="ordsumbid" style="text-align: right"></td>
+                                        <td class="ordsumask" style="text-align: right"></td>
+                                        <td class="ordsumdiff" style="text-align: right"></td>
+                                        <td class="ordsum10" style="text-align: right"></td>
+                                        <td class="ordsum30" style="text-align: right"></td>
+                                        <td class="ordsum60" style="text-align: right"></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer class="sticky-footer bg-white">
+            <div class="container my-auto">
+                <div class="copyright text-center my-auto">
+                    <span>Copyright &copy; Coredjk 2025</span>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+<a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+</a>
+{% include '/comm/adscript.html' %}
+
+<script>
+const coins = {{ trcoins | tojson }};
+const protocol = location.protocol === "https:" ? "wss" : "ws";
+const ws = new WebSocket(`${protocol}://${location.host}/ws/orderbook?coins=${coins.join(',')}`);
+const orderbookHistory = {};
+
+function safeParseFloat(val) {
+    if (typeof val === "undefined" || val === null) return 0;
+    let v = parseFloat(val.toString().replace(/,/g, ''));
+    return isNaN(v) ? 0 : v;
+}
+function numberWithCommas(x) {
+    x = x.toString();
+    var parts = x.split(".");
+    parts[0] = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    return parts.length > 1 ? parts[0] + "." + parts[1] : parts[0];
+}
+function getChangeClass(val) {
+    if (typeof val !== "string") return "change-even";
+    if (val === "-") return "change-even";
+    const num = parseFloat(val.replace('%',''));
+    if (isNaN(num)) return "change-even";
+    if (num >= 5) return "change-up";
+    if (num <= -5) return "change-down";
+    return "change-even";
+}
+function calcOrderbookSums(orderbook_units) {
+    let askSum = 0, bidSum = 0;
+    for (let i = 0; i < orderbook_units.length; i++) {
+        const unit = orderbook_units[i];
+        askSum += safeParseFloat(unit.ask_price) * safeParseFloat(unit.ask_size);
+        bidSum += safeParseFloat(unit.bid_price) * safeParseFloat(unit.bid_size);
+    }
+    return {
+        ask: askSum,
+        bid: bidSum,
+        diff: bidSum/askSum*100,
+    };
+}
+
+ws.onmessage = function(event) {
+    const data = JSON.parse(event.data);
+    if (!data.market || !data.orderbook_units) return;
+
+    const sums = calcOrderbookSums(data.orderbook_units);
+    const coinSymbol = data.market;
+
+    // 이력 저장
+    if (!orderbookHistory[coinSymbol]) {
+        orderbookHistory[coinSymbol] = { bid: [], ask: [], total: [] };
+    }
+    orderbookHistory[coinSymbol].bid.push(sums.bid);
+    orderbookHistory[coinSymbol].ask.push(sums.ask);
+    orderbookHistory[coinSymbol].total.push(sums.bid + sums.ask);
+    if (orderbookHistory[coinSymbol].bid.length > 120) orderbookHistory[coinSymbol].bid.shift();
+    if (orderbookHistory[coinSymbol].ask.length > 120) orderbookHistory[coinSymbol].ask.shift();
+    if (orderbookHistory[coinSymbol].total.length > 120) orderbookHistory[coinSymbol].total.shift();
+
+    function calcChange(current, arr, n) {
+        if (arr.length < n) return "-";
+        const avg = arr.slice(-n, -1).reduce((a,b) => a+b, 0) / (n-1);
+        if (avg === 0) return "-";
+        const ratio = ((current - avg) / avg) * 100;
+        return (ratio > 0 ? "+" : "") + ratio.toFixed(2) + "%";
+    }
+
+    const bid10 = calcChange(sums.bid, orderbookHistory[coinSymbol].bid, 10);
+    const bid30 = calcChange(sums.bid, orderbookHistory[coinSymbol].bid, 60);
+    const bid60 = calcChange(sums.bid, orderbookHistory[coinSymbol].bid, 120);
+
+    const ask10 = calcChange(sums.ask, orderbookHistory[coinSymbol].ask, 10);
+    const ask30 = calcChange(sums.ask, orderbookHistory[coinSymbol].ask, 60);
+    const ask60 = calcChange(sums.ask, orderbookHistory[coinSymbol].ask, 120);
+
+    const total10 = calcChange(sums.bid + sums.ask, orderbookHistory[coinSymbol].total, 10);
+    const total30 = calcChange(sums.bid + sums.ask, orderbookHistory[coinSymbol].total, 60);
+    const total60 = calcChange(sums.bid + sums.ask, orderbookHistory[coinSymbol].total, 120);
+
+    // 테이블 갱신
+    $('#dataTable tbody tr').each(function() {
+        const $row = $(this);
+        let coinText = $row.find('td:first a').length ? $row.find('td:first a').text().trim() : $row.find('td:first').text().trim();
+        if (coinText === coinSymbol) {
+            $row.find('.ordsumask').text(numberWithCommas(sums.ask.toFixed(0)));
+            $row.find('.ordsumbid').text(numberWithCommas(sums.bid.toFixed(0)));
+            $row.find('.ordsumdiff').text(numberWithCommas(sums.diff.toFixed(2)));
+            $row.find('.ordsum10').html(`<span class="${getChangeClass(bid10)}">${bid10}</span> : <span class="${getChangeClass(ask10)}">${ask10}</span> : <span class="${getChangeClass(total10)}">${total10}</span>`);
+            $row.find('.ordsum30').html(`<span class="${getChangeClass(bid30)}">${bid30}</span> : <span class="${getChangeClass(ask30)}">${ask30}</span> : <span class="${getChangeClass(total30)}">${total30}</span>`);
+            $row.find('.ordsum60').html(`<span class="${getChangeClass(bid60)}">${bid60}</span> : <span class="${getChangeClass(ask60)}">${ask60}</span> : <span class="${getChangeClass(total60)}">${total60}</span>`);
+        }
+    });
+};
+
+ws.onclose = function() {
+    console.log("WebSocket closed");
+};
+</script>
+</body>
+</html>

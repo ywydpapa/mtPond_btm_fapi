@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        {% include '/comm/adheader.html' %}
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include '/comm/sidebar.html' %}
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                {% include '/comm/adtopbar.html' %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <!-- Page Heading -->
+                    <!-- DataTales Example -->
+                <div class = "row">
+                <div class="col-lg-6">
+                    <div class="card shadow mb-4">
+                        <div class="card-header py-3">
+                            <h6 class="m-0 font-weight-bold text-primary">나의 수익 현황</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="table-responsive">
+                                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                                    <thead>
+                                        <tr  style="text-align: center">
+                                            <th>집계 일자</th>
+                                            <th>잔고</th>
+                                            <th>차액</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        {% for item in items %}
+                                         <tr style="text-align: right">
+                                         <td class = "coins" style="text-align: center" >{{ item[1] }}</td>
+                                         <td class="vola">{{ item[2] }}</td>
+                                         <td class="volb"></td>
+                                         </tr>
+                                        {% endfor %}
+                                    <tr>
+                                        <td colspan="2" style="text-align: center; background-color: linen "> 차액 합계</td>
+                                        <td id="suminc" style="text-align: right; background-color: linen"></td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="col-lg-6">
+                            <div class="card h-50 shadow mb-4">
+                                <div class="card-header py-3">
+                                    <h6 class="m-0 font-weight-bold text-primary">수익현황</h6>
+                                </div>
+                                <div class="card-body">
+                                    <div class="chart-area">
+                                        <canvas id="myChart1" width="100%" height="45%"></canvas>
+                                    </div>
+                                </div>
+                                <div class="card-footer">
+                                </div>
+                            </div>
+                        </div>
+                </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+             <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; SOFTCORE 2025</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+     <!-- Bootstrap core JavaScript-->
+
+    {% include '/comm/adscript.html' %}
+    {% include '/comm/adscriptchart.html' %}
+<script>
+    $(document).ready(function () {
+        calbenifit();
+        setcurr();
+    });
+
+    function numberWithCommas(x) {
+		return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	}
+
+    function numberNoneCommas(x) {
+		return x.toString().replace(/[\D\s\._\-]+/g, "");
+	}
+
+    function setcurr(){
+        $Aarr = $(".vola");
+        for (var i = 0; i < $Aarr.length; i++) {
+            var cur = $Aarr[i].innerText;
+            $Aarr[i].innerText = numberWithCommas(cur);
+        }
+    }
+
+    function calbenifit(){
+        $Aarr = $(".vola");
+        $Barr = $(".volb");
+        var suminc = 0;
+        for (var i = 0; i<$Aarr.length; i++){
+            var aval = 0;
+            if (i === 0){
+                var cur = $Aarr[i].innerText;
+            }else{
+                var cur = $Aarr[i-1].innerText;
+            }
+            var bur = $Aarr[i].innerText;
+            aval = bur - cur ;
+            suminc = suminc + aval; ;
+            $Barr[i].innerText = numberWithCommas(aval);
+            dataArr2.push(aval);
+        }
+        $("#suminc").html(numberWithCommas(suminc));
+
+    }
+
+    dataArr1 = {{ tval | safe }};
+    dataArr2 = {{ ival | safe }};
+    new Chart(document.getElementById("myChart1"), {
+    type: 'line',
+    data: {
+        labels: dataArr1,
+        datasets: [{
+            label: '잔고',
+            data: dataArr2,
+            borderColor: "rgb(247,85,16)",
+            fill: false,
+            lineTension: 0
+        }]
+    },
+    options: {
+        responsive: true,
+        title: {
+            display: true,
+            text: "수익"
+        },
+        tooltips: {
+            mode: 'index',
+            intersect: false,
+        },
+        hover: {
+            mode: 'nearest',
+            intersect: true
+        },
+        scales: {
+            xAxes: [{
+                display: true,
+                scaleLabel: {
+                    display: true,
+                }
+            }],
+            yAxes: [{
+                display: true,
+                ticks: {
+                },
+                scaleLabel: {
+                    display: true,
+                }
+            }]
+        }
+    }
+});
+</script>
+</body>
+</html>

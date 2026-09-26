@@ -1,0 +1,16 @@
+/* Default jquery-loading styles */
+
+.loading-overlay {
+  display: table;
+  z-index: 99999;
+}
+
+.loading-overlay-content {
+  text-transform: uppercase;
+  letter-spacing: 0.4em;
+  font-size: 1.15em;
+  font-weight: bold;
+  text-align: center;
+  display: table-cell;
+  vertical-align: middle;
+}

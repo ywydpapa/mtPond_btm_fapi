@@ -1,0 +1,396 @@
+* {
+  	box-sizing: border-box;
+  	font-family: -apple-system, BlinkMacSystemFont, "segoe ui", roboto, oxygen, ubuntu, cantarell, "fira sans", "droid sans", "helvetica neue", Arial, sans-serif;
+  	font-size: 16px;
+  	-webkit-font-smoothing: antialiased;
+  	-moz-osx-font-smoothing: grayscale;
+}
+body {
+  	background-color: #435165;
+  	margin: 0;
+}
+.login, .register {
+  	width: 400px;
+  	background-color: #ecc10c;
+  	/*box-shadow: 0 0 9px 0 rgba(0, 0, 0, 0.3);*/
+	border-radius: 16px;
+}
+.login h1, .register h1 {
+  	text-align: center;
+  	color: #5b6574;
+  	font-size: 24px;
+  	padding: 0 0 20px 0;
+  	border-bottom: 1px solid #dee0e4;
+}
+.login .links, .register .links {
+  	display: flex;
+  	padding: 0 15px;
+}
+.login .links a, .register .links a {
+  	color: #adb2ba;
+  	text-decoration: none;
+  	display: inline-flex;
+  	padding: 0 10px 10px 10px;
+  	font-weight: bold;
+}
+.login .links a:hover, .register .links a:hover {
+  	color: #9da3ac;
+}
+.login .links a.active, .register .links a.active {
+  	border-bottom: 3px solid #3274d6;
+  	color: #3274d6;
+}
+.login form, .register form {
+  	display: flex;
+  	flex-wrap: wrap;
+  	justify-content: center;
+  	padding-top: 20px;
+	border-radius: 8px; /* 여기서 모서리를 라운드 처리합니다 */
+}
+.login form label, .register form label {
+  	display: flex;
+  	justify-content: center;
+  	align-items: center;
+  	width: 50px;
+  	height: 50px;
+  	background-color: #619be6;
+  	color: #ffffff;
+	border-radius: 8px; /* 여기서 모서리를 라운드 처리합니다 */
+}
+.login form input[type="password"], .login form input[type="text"], .login form input[type="email"], .register form input[type="password"], .register form input[type="text"], .register form input[type="email"] {
+  	width: 310px;
+  	height: 50px;
+  	border: 1px solid #dee0e4;
+  	margin-bottom: 20px;
+  	padding: 0 15px;
+	border-radius: 8px; /* 여기서 모서리를 라운드 처리합니다 */
+}
+.login form input[type="submit"], .register form input[type="submit"] {
+  	width: 100%;
+  	padding: 15px;
+  	margin-top: 20px;
+  	background-color: #619be6;
+  	border: 0;
+  	cursor: pointer;
+  	font-weight: bold;
+  	color: #ffffff;
+  	transition: background-color 0.2s;
+	border-radius: 8px; /* 여기서 모서리를 라운드 처리합니다 */
+}
+.login form input[type="submit"]:hover, .register form input[type="submit"]:hover {
+  	background-color: #619be6;
+  	transition: background-color 0.2s;
+}
+.navtop {
+  	background-color: #2f3947;
+  	height: 60px;
+  	width: 100%;
+  	border: 0;
+}
+.navtop div {
+  	display: flex;
+  	margin: 0 auto;
+  	width: 1000px;
+  	height: 100%;
+}
+.navtop div h1, .navtop div a {
+  	display: inline-flex;
+  	align-items: center;
+}
+.navtop div h1 {
+  	flex: 1;
+  	font-size: 24px;
+  	padding: 0;
+ 	margin: 0;
+  	color: #eaebed;
+  	font-weight: normal;
+}
+.navtop div a {
+  	padding: 0 20px;
+  	text-decoration: none;
+  	color: #c1c4c8;
+  	font-weight: bold;
+}
+.navtop div a i {
+  	padding: 2px 8px 0 0;
+}
+.navtop div a:hover {
+  	color: #eaebed;
+}
+body.loggedin {
+  	background-color: #f3f4f7;
+}
+.content {
+  	width: 1000px;
+  	margin: 0 auto;
+}
+.content h2 {
+  	margin: 0;
+  	padding: 25px 0;
+  	font-size: 22px;
+  	border-bottom: 1px solid #e0e0e3;
+  	color: #4a536e;
+}
+.content > p, .content > div {
+  	box-shadow: 0 0 5px 0 rgba(0, 0, 0, 0.1);
+  	margin: 25px 0;
+  	padding: 25px;
+	background-color: #fff;
+}
+.content > p table td, .content > div table td {
+	padding: 5px;
+}
+.content > p table td:first-child, .content > div table td:first-child {
+	font-weight: bold;
+	color: #4a536e;
+	padding-right: 15px;
+}
+.content > div p {
+	padding: 5px;
+	margin: 0 0 10px 0;
+}
+
+/*로그인 시작*/
+
+body{margin:0 auto;}
+
+#loginContents{
+	overflow: hidden;
+	width:100%;
+	height:100vh;
+}
+
+#loginContents #loginContent{
+    float:right;
+    width: 100%;
+    height: 100%;
+    background-color: #ffffff;
+}
+
+#loginContents #loginContent .login{
+    position: relative;
+    left: 50%;
+    top: 50%;
+    transform:translate(-50%,-50%);
+    display:inline-block;
+}
+
+#loginContents #loginContent #loginForm #loginLogoImgDiv{
+	position: relative;
+    text-align: center;
+}
+
+#loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
+    width: 180px;
+}
+
+#loginContents #loginContent #loginForm #loginInput{
+    margin-top: 48px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input{
+    width:400px;
+    height: 52px;
+    border: 1px solid #BDBDBD;
+    background: #FAFAFA;
+    font-weight: 400;
+    font-size: 15px;
+    line-height: 23px;
+    padding: 0 16px;
+    border-radius: 8px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:not(:last-child){
+    margin-bottom: 14px;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:not(:last-child):hover{
+    border: 1px solid #5858B7;
+}
+
+#loginContents #loginContent #loginForm #loginInput input:last-child:hover{
+    border: 1px solid #5858B7;
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv{
+    width: 100%;
+    text-align: left;
+    margin:10px 0 36px 0;
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn.active{
+    width:21px;
+    vertical-align: bottom;
+    content: url("/static/img/polarisBG.jpg");
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionBtn:not(.active){
+    width:21px;
+    vertical-align: bottom;
+}
+
+#loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
+    font-weight: 300;
+    font-size: 14px;
+    line-height: 23px;
+    color: #9E9E9E;
+}
+
+#loginContents #loginContent #loginForm #loginMsg{
+    font-weight: 400;
+    font-size: 16px;
+    color: #8d90ff;
+    height: 50px;
+    box-sizing: border-box;
+    padding:12px 0 10px 0;
+    text-align:center;
+    text-overflow: ellipsis;
+    display: none;
+}
+
+#loginContents #loginContent #loginForm #loginBtns button{
+    width: 100%;
+    height: 52px;
+    margin:0 auto;
+    display:inherit;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 26px;
+    color: #ffffff;
+    background-color: #332D83;
+    cursor: pointer;
+    border: 0;
+    border-radius: 8px;
+}
+
+#loginContent #loginIntroduce{
+    width: 100%;
+    height: 100%;
+    background-image: url("/static/img/polarisBG.jpg");
+    background-size: cover;
+}
+
+#loginContent #loginIntroduce #loginSpans{
+    position: relative;
+    text-align: center;
+    top: 23.5%;
+}
+
+#loginContent #loginIntroduce #loginSpans #loginIntroSpan_1{
+    font-weight: 300;
+    font-size: calc(1em + 2vw);
+    line-height: 70px;
+    color: #FFFFFF;
+}
+
+#loginContent #loginIntroduce #loginSpans #loginIntroSpan_2{
+    font-weight: 700;
+    font-size: calc(1em + 2vw);
+    line-height: 70px;
+    color: #FFFFFF;
+}
+
+#loginContent #loginIntroduce #loginSpans #loginIntroSpan_3{
+    font-weight: 100;
+    font-size: calc(0.33em + 0.67vw);
+    line-height: 40px;
+    color: #FFFFFF;
+}
+
+/* @media(max-width: 1439px){
+    #loginContents #loginIntroduce{display: none;}
+    #loginContents #loginContent{
+        width:100%;
+        background-image: url(/static/images/login/loginBackground.jpg);
+        background-size: cover;
+    }
+    #loginContents #loginContent #loginForm{
+        transform: translate(-50%, -50%);
+        background-color: #d5b50f;
+        padding:80px 40px;
+        border-radius:16px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input{
+        margin-bottom: 0;
+        width:400px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:not(:last-child){
+        border-bottom:0;
+        border-top-right-radius: 8px;
+        border-top-left-radius: 8px;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 0;
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:last-child{
+        border-bottom-right-radius: 8px;
+        border-bottom-left-radius: 8px;
+        border-top-right-radius: 0;
+        border-top-left-radius: 0;
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input:not(:last-child):hover{
+        margin-bottom: 0;
+    }
+
+    #loginContents #loginContent #loginForm #loginMsg{display: none;}
+
+    #loginContents #loginContent #loginForm #loginSessionDiv{margin:8px 0 36px 0;}
+
+    #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{
+        font-size: 14px;
+        margin-left:0;
+    }
+
+    #loginContents #loginContent #loginForm #loginBtns button{
+        width:400px;
+        border-radius: 8px;
+    }
+} */
+/*화면크기 1439+ end*/
+
+/* @media(max-width: 600px){
+    #loginContent{padding:0 16px; box-sizing: border-box;}
+
+    #loginContents #loginContent #loginForm #loginLogoImgDiv #loginLogoImg{
+        width:140px; height:auto;
+    }
+
+    #loginContents #loginContent #loginForm{
+        width:70%;
+        padding:50px 30px;
+        transform: translate(-50%, -50%);
+        padding:80px 40px;
+        border-radius:16px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput{
+        margin-top:32px;
+    }
+
+    #loginContents #loginContent #loginForm #loginInput input{
+        width:100%;
+        height:44px;
+        font-size: 14px;
+    }
+
+    #loginContents #loginContent #loginForm #loginBtns button{
+        width:100%;
+        height:46px;
+        font-size: 15px;
+    }
+
+    #loginContents #loginContent #loginForm #loginSessionDiv #loginSessionSpan{font-size: 12px;}
+
+    #loginContents #loginIntroduce{display: none;}
+    #loginContents #loginContent{
+        width:100%;
+        background-image: url(../../images/login/loginBackground.jpg);
+        background-size: cover;
+    }
+} */
+/*화면크기 600- end*/

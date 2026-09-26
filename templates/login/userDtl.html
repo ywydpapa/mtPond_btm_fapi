@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+        {% include '/comm/adheader.html' %}
+</head>
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+        {% include '/comm/sidebar.html' %}
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+            <!-- Main Content -->
+            <div id="content">
+                {% include '/comm/adtopbar.html' %}
+                <!-- Begin Page Content -->
+                <div class="container-fluid">
+                    <!-- Page Heading -->
+                    <h1 class="h3 mb-4 text-gray-800">사용자 정보 관리</h1>
+                    <hr>
+                    <div>
+                 <form action="/updateuserdtl" method="post" onsubmit="return confirm('사용자의 정보를 저장하시겠습니까?');">
+                 <table class="table">
+                     <tr style="display: none">
+                         <td>
+                         userNo
+                         </td>
+                         <td>
+                             <label for="uno"></label><input type="number" id="uno" name="uno" value="{{ userdtl[0] }}">
+                         </td>
+                         <td></td>
+                     </tr>
+                     <tr>
+                         <td>
+                         userId
+                         </td>
+                         <td>
+                         {{ userdtl[1] }}
+                         </td>
+                         <td>
+                             <button class="btn btn-primary"> 개인정보 수정 </button>
+                         </td>
+                     </tr>
+                     <tr>
+                         <td>
+                         userName
+                         </td>
+                         <td>
+                         {{ userdtl[2] }}
+                         </td>
+                         <td></td>
+                     </tr>
+                     <tr>
+                         <td>
+                         AccessKey
+                         </td>
+                         <td>
+                             <label for="apikey1"></label><input type="text" id="apikey1" name="apikey1" value="{{ userdtl[4] }}" class="form-control">
+                         </td>
+                         <td></td>
+                     </tr>
+                     <tr>
+                         <td>
+                         SecureKey
+                         </td>
+                         <td>
+                             <label for="apikey2"></label><input type="text" id="apikey2" name="apikey2" value="{{ userdtl[5] }}" class="form-control">
+                         </td>
+                         <td></td>
+                     </tr>
+                     <tr>
+                         <td>Daemon server No</td>
+                         <td><input type="number" id="svrno" name="svrno" min="1" max="100000" value="{{ userdtl[8] }}"> </td>
+                         <td></td>
+                     </tr>
+                 </table>
+                 </form>
+                        <table class="table">
+                            <tr>
+                         <td>password</td>
+                         <td><input id = "mypasswd" name = "mypasswd" type="password" class="form-control"> </td>
+                         <td><button class="btn btn-danger" onclick="setmypass({{ userdtl[0] }})">암호변경</button></td>
+                     </tr>
+                        </table>
+             </div>
+                </div>
+                <!-- /.container-fluid -->
+            </div>
+            <!-- End of Main Content -->
+             <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                        <span>Copyright &copy; K3 Labs 2024</span>
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+        </div>
+        <!-- End of Content Wrapper -->
+    </div>
+    <!-- End of Page Wrapper -->
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+     <!-- Bootstrap core JavaScript-->
+{% include '/comm/adscript.html' %}
+</body>
+<script>
+    $(document).ready(function () {
+    });
+
+    function setmypass(uno) {
+    passwd = $('#mypasswd').val();
+    if (passwd == "") {
+        alert("변경하려는 암호가 없습니다.");
+        return;
+    }
+    const data = {
+        uno: uno,
+        passwd: passwd
+    };
+    $.ajax({
+        type: "POST",
+        url: "/changemypass",
+        data: JSON.stringify(data), // JSON 문자열로 변환
+        contentType: "application/json", // JSON 타입 명시
+        success: function(res) {
+            console.log(res);
+            alert("암호가 변경되었습니다. 원활한 사용을 위해 다시 로그인 해주세요.");
+            window.location.href = "/logout";
+        },
+        error: function(xhr, status, error) {
+            alert("암호 변경에 실패했습니다: " + xhr.responseText);
+        }
+    });
+}
+
+</script>
+</html>
